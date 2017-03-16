@@ -115,13 +115,14 @@ public class DataParser {
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
 
 		String[] values = line.split(";");
-
-		data.addProperty(properties[0], dmyToXSDate(values[0]));
-		data.addProperty(properties[1], values[1] + ":00");
-		data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
-		for (int i = 3; i < values.length; i++) {
-			data.addLiteral(properties[i], Integer.parseInt(values[i]));
-		}	
+		if(values.length == 9){
+			data.addProperty(properties[0], values[0]); //dmyToXSDate funker ikke, så bare bruker vanlig
+			data.addProperty(properties[1], values[1] + ":00");
+			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
+			for (int i = 3; i < values.length; i++) {
+				data.addLiteral(properties[i], Integer.parseInt(values[i]));
+			}	
+		}
 	} //end addData
 
 	private static String dmyToXSDate(String dmy){
