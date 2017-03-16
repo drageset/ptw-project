@@ -3,6 +3,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
@@ -77,6 +82,8 @@ public class DataParser {
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+			
+			Property dateTime = model.createProperty(ns + "dateTime");
 
 			//			Property date = model.createProperty(ns + "date");
 			//			date.addProperty(RDFS.range, XSD.date);
@@ -94,8 +101,12 @@ public class DataParser {
 
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
-			for (int i=0; i<headers.length; i++)
+			for (int i=0; i<headers.length; i++){
 				properties[i] = model.createProperty(model.getNsPrefixURI("pt") + headers[i].toLowerCase());
+				//				if(i > 2){
+				//					properties[i].addProperty(RDFS.range, XSD.decimal);
+				//				}
+			}
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -116,8 +127,11 @@ public class DataParser {
 
 		String[] values = line.split(";");
 		if(values.length == 9){
-			data.addProperty(properties[0], values[0]); //dmyToXSDate funker ikke, så bare bruker vanlig
-			data.addProperty(properties[1], values[1] + ":00");
+			String xsdDate = dmyToXSDate(values[0]);
+			String xsdTime = values[1] + ":00";
+			data.addProperty(properties[0], xsdDate);
+			data.addProperty(properties[1], xsdTime);
+			data.addProperty(model.getProperty(ns + "dateTime"), xsdDate + "T" + xsdTime);
 			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {
 				data.addLiteral(properties[i], Integer.parseInt(values[i]));
@@ -125,9 +139,43 @@ public class DataParser {
 		}
 	} //end addData
 
+	/**
+	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til xsd:date format, som er yyyy-mm-dd
+	 * @param dmy string
+	 * @return xsd:date format string
+	 */
 	private static String dmyToXSDate(String dmy){
-		String[] dmyArray = dmy.split(".");
-		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0];
+		try {
+			return calToXSDate(dmyToCal(dmy));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return "ErrorFailedToParse";
+	}
+
+	/**
+	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til Calendar
+	 * @param dmy string
+	 * @return Date
+	 * @throws ParseException 
+	 */
+	private static Calendar dmyToCal(String dmy) throws ParseException{
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+		cal.setTime(sdf.parse(dmy));
+		return cal;  
+	}
+
+	/**
+	 * Gjør en calendar om til en streng med formatet til xsd:date
+	 * @param cal
+	 * @return xsd:date format string
+	 */
+	private static String calToXSDate(Calendar cal) {
+		Date time = cal.getTime();
+		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		String xsdDate = xsdFormat.format(time);
+		return xsdDate;
 	}
 
 }
