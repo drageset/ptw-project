@@ -24,6 +24,7 @@ public class DataParser {
 
 	public final static String prefix = "pt";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
+	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
@@ -119,14 +120,18 @@ public class DataParser {
 
 		String[] values = line.split(";");
 		if(values.length == 9){
-			String xsdDate = dmyToXSDate(values[0]);
-			String xsdTime = values[1] + ":00";
+			String xsdDateString = dmyToXSDate(values[0]);
+			String xsdTimeString = values[1] + ":00";
+			String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
+			Literal xsdDate = model.createTypedLiteral(xsdDateString, xsd + "date");
+			Literal xsdTime = model.createTypedLiteral(xsdTimeString, xsd + "time");
+			Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, xsd + "dateTime");
 			data.addProperty(properties[0], xsdDate);
 			data.addProperty(properties[1], xsdTime);
-			data.addProperty(model.getProperty(ns + "dateTime"), xsdDate + "T" + xsdTime);
+			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTime);
 			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {
-				Literal value = model.createTypedLiteral(values[i], "http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+				Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
 				data.addLiteral(properties[i], value);
 				//data.addLiteral(properties[i], Integer.parseInt(values[i]));
 			}	
