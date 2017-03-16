@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,13 +29,17 @@ public class DataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
-
-		OntModel model = ModelFactory.createOntologyModel();
+		String outputFilePath = "semanticData.ttl";
+		String notation = "TURTLE";
+		
+		OntModel model = ModelFactory.createOntologyModel(); 
 
 		model.setNsPrefix(prefix, ns);
 
 		addFile(filePath, model);
 
+		writeModelToFile(model, outputFilePath, notation);
+		
 		model.write(System.out, "TURTLE");
 	}
 
@@ -175,6 +180,22 @@ public class DataParser {
 		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 		String xsdDate = xsdFormat.format(time);
 		return xsdDate;
+	}
+	
+	/**
+	 * Writes a model to a file in a chosen notation
+	 * @param model The RDF model that you wish to write to a file
+	 * @param filename The filename of the file that you wish to write the RDF model to
+	 * @param notation The notation (i.e. TURTLE, JSON-LD) that you wish the file to be written in
+	 */
+	private static void writeModelToFile(Model model, String filename, String notation){
+		try{
+		    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+		    model.write(writer, notation);
+		    writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
