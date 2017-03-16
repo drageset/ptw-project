@@ -11,12 +11,14 @@ import java.util.Locale;
 
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.XSD;
 
 public class DataParser {
 
@@ -26,11 +28,6 @@ public class DataParser {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
 
-		String curDir = System.getProperty("user.dir");
-		System.out.println("Current sys dir: " + curDir);
-
-		//		Model defModel = ModelFactory.createDefaultModel();
-		//		InfModel model = ModelFactory.createRDFSModel(defModel);
 		OntModel model = ModelFactory.createOntologyModel();
 
 		model.setNsPrefix(prefix, ns);
@@ -40,12 +37,9 @@ public class DataParser {
 		model.write(System.out, "TURTLE");
 	}
 
-	private static void addFile (String filePame, OntModel model) throws FileNotFoundException, IOException {
-		File csvFile = new File(filePame);
-
-		System.out.println("data filepath: " + csvFile.getAbsolutePath());
+	private static void addFile (String filePath, OntModel model) throws FileNotFoundException, IOException {
+		File csvFile = new File(filePath);
 		BufferedReader reader;
-
 		try {
 			reader = new BufferedReader(new FileReader(csvFile));
 
@@ -70,7 +64,7 @@ public class DataParser {
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			final Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+			Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
 
 			Resource feltClass = model.createResource(ns + "RoadLane");
 			Property roadLaneDirection = model.createProperty(ns + "roadLaneDirection");
@@ -84,9 +78,7 @@ public class DataParser {
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
 			
 			Property dateTime = model.createProperty(ns + "dateTime");
-
-			//			Property date = model.createProperty(ns + "date");
-			//			date.addProperty(RDFS.range, XSD.date);
+			dateTime.addProperty(RDFS.range, XSD.dateTime);
 
 			for(String felt : felt1){
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
@@ -103,9 +95,9 @@ public class DataParser {
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
 				properties[i] = model.createProperty(model.getNsPrefixURI("pt") + headers[i].toLowerCase());
-				//				if(i > 2){
-				//					properties[i].addProperty(RDFS.range, XSD.decimal);
-				//				}
+				if(i > 2){
+					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
+				}
 			}
 
 			String line = null;
@@ -134,7 +126,9 @@ public class DataParser {
 			data.addProperty(model.getProperty(ns + "dateTime"), xsdDate + "T" + xsdTime);
 			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {
-				data.addLiteral(properties[i], Integer.parseInt(values[i]));
+				Literal value = model.createTypedLiteral(values[i], "http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+				data.addLiteral(properties[i], value);
+				//data.addLiteral(properties[i], Integer.parseInt(values[i]));
 			}	
 		}
 	} //end addData
