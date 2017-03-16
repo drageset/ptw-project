@@ -2,7 +2,7 @@ Telledata: Rådata;;;;Felt 1, 3; Fra Nyborg;;;;;
 Utskriftsdato: 27. februar 2017;;;;Felt 2 og 4;Fra X Salhusveien;;;;;
 Tellepunkt: 1204412 - ÅSAMYRANE;;;;;;;;;;
 FV 564 Hp: 55 Km: 320;;;;;;;;;;
-Date;Time;RoadLane;numOfVehicles;numOfVehiclesClass1;numOfVehiclesClass2;numOfVehiclesClass3;numOfVehiclesClass4;numOfVehiclesClass5;;
+date;time;roadLaneMeasured;numOfVehicles;numOfVehiclesClass1;numOfVehiclesClass2;numOfVehiclesClass3;numOfVehiclesClass4;numOfVehiclesClass5;;
 ;;;;;;;;;;
 27.06.2016;01:00;1;6;5;0;0;0;1;;
 27.06.2016;01:00;2;3;2;0;1;0;0;;

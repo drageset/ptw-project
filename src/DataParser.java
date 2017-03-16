@@ -77,9 +77,9 @@ public class DataParser {
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
-			
-//			Property date = model.createProperty(ns + "date");
-//			date.addProperty(RDFS.range, XSD.date);
+
+			//			Property date = model.createProperty(ns + "date");
+			//			date.addProperty(RDFS.range, XSD.date);
 
 			for(String felt : felt1){
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
@@ -107,7 +107,7 @@ public class DataParser {
 			e.printStackTrace();
 		}
 
-	}
+	} //end addFile
 
 	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();
@@ -115,14 +115,18 @@ public class DataParser {
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
 
 		String[] values = line.split(";");
-		for (int i = 0; i < values.length; i++) {
-			if(i == 2){
-				data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[i]));
-			} else if (i > 2) {
-				data.addLiteral(properties[i], Integer.parseInt(values[i]));
-			} else {
-				data.addProperty(properties[i], values[i]);
-			}
+
+		data.addProperty(properties[0], dmyToXSDate(values[0]));
+		data.addProperty(properties[1], values[1] + ":00");
+		data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
+		for (int i = 3; i < values.length; i++) {
+			data.addLiteral(properties[i], Integer.parseInt(values[i]));
 		}	
+	} //end addData
+
+	private static String dmyToXSDate(String dmy){
+		String[] dmyArray = dmy.split(".");
+		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0];
 	}
+
 }
