@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Literal;
@@ -155,6 +156,25 @@ public class DataParser {
 			e.printStackTrace();
 		}
 		return "ErrorFailedToParse";
+	}
+	
+	/**
+	 * Gjør dato på formatet xsd:datetime om til et objekt av typen XSDDateTime
+	 * @param xsd:dateTime string
+	 * @return XSDDateTime objekt
+	 */
+	private static XSDDateTime toXSDateTime(String xsdString){
+		Calendar cal;
+		try {
+			cal = Calendar.getInstance();
+			SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+			cal.setTime(xsdFormat.parse(xsdString));
+			return new XSDDateTime(cal);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
