@@ -94,8 +94,12 @@ public class DataParser {
 
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
-			for (int i=0; i<headers.length; i++)
+			for (int i=0; i<headers.length; i++){
 				properties[i] = model.createProperty(model.getNsPrefixURI("pt") + headers[i].toLowerCase());
+				//				if(i > 2){
+				//					properties[i].addProperty(RDFS.range, XSD.decimal);
+				//				}
+			}
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -115,17 +119,25 @@ public class DataParser {
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
 
 		String[] values = line.split(";");
-
-		data.addProperty(properties[0], dmyToXSDate(values[0]));
-		data.addProperty(properties[1], values[1] + ":00");
-		data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
-		for (int i = 3; i < values.length; i++) {
-			data.addLiteral(properties[i], Integer.parseInt(values[i]));
-		}	
+		if(values.length == 9){
+			System.out.println("first value in the line: " + values[0]);
+			data.addProperty(properties[0], dmyToXSDate(values[0]));
+			data.addProperty(properties[1], values[1] + ":00");
+			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
+			for (int i = 3; i < values.length; i++) {
+				data.addLiteral(properties[i], Integer.parseInt(values[i]));
+				//data.addProperty(properties[i], values[i] );
+			}	
+		}
 	} //end addData
 
 	private static String dmyToXSDate(String dmy){
+		System.out.println("dmy: " + dmy);
 		String[] dmyArray = dmy.split(".");
+		System.out.println("length of the dmy array: " + dmyArray.length);
+		for (int i = 0; i < dmyArray.length; i++) {
+			System.out.println("dmy array slot " + i + " is " + dmyArray[i]);
+		}
 		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0];
 	}
 
