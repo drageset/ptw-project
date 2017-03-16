@@ -14,20 +14,20 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
 public class DataParser {
-	
+
 	public final static String prefix = "pt";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
-	
+
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
 
 		String curDir = System.getProperty("user.dir");
 		System.out.println("Current sys dir: " + curDir);
 
-//		Model defModel = ModelFactory.createDefaultModel();
-//		InfModel model = ModelFactory.createRDFSModel(defModel);
+		//		Model defModel = ModelFactory.createDefaultModel();
+		//		InfModel model = ModelFactory.createRDFSModel(defModel);
 		OntModel model = ModelFactory.createOntologyModel();
-		
+
 		model.setNsPrefix(prefix, ns);
 
 		addFile(filePath, model);
@@ -45,11 +45,13 @@ public class DataParser {
 			reader = new BufferedReader(new FileReader(csvFile));
 
 			String[] line1 = reader.readLine().split(";");
+			line1[4] = line1[4].replaceAll(" og ", ", ");
 			String[] felt1 = line1[4].substring(5).split(", ");
 			String felt1retning = line1[5];
 
 			String[] line2 = reader.readLine().split(";");
-			String[] felt2 = line2[4].substring(5).split(" og ");
+			line2[4] = line2[4].replaceAll(" og ", ", ");
+			String[] felt2 = line2[4].substring(5).split(", ");
 			String felt2retning = line2[5];
 
 			String[] line3 = reader.readLine().split(";");
@@ -59,23 +61,26 @@ public class DataParser {
 			String[] line4 = reader.readLine().split(";");
 			String label = line4[0];
 
-			
+
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
-			
+			final Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+
 			Resource feltClass = model.createResource(ns + "RoadLane");
 			Property roadLaneDirection = model.createProperty(ns + "roadLaneDirection");
 			roadLaneDirection.addProperty(RDFS.domain, feltClass);
-			
+
 			Property measuresRoadLane = model.createProperty(ns + "measuresRoadLane");
 			measuresRoadLane.addProperty(RDFS.domain, trafficSensorClass);
-			
+
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
 			
+//			Property date = model.createProperty(ns + "date");
+//			date.addProperty(RDFS.range, XSD.date);
+
 			for(String felt : felt1){
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
 				laneres.addProperty(roadLaneDirection, felt1retning);
@@ -94,7 +99,7 @@ public class DataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, trafficMeasurementClass);
+				addData(line, model, properties, trafficMeasurementClass, sensor);
 			}
 			reader.close();
 
@@ -104,13 +109,20 @@ public class DataParser {
 
 	}
 
-	private static void addData(String line, Model model, Property[] properties, Resource measurementType) {
+	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
+		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
 
 		String[] values = line.split(";");
 		for (int i = 0; i < values.length; i++) {
-			data.addProperty(properties[i], values[i]);
+			if(i == 2){
+				data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[i]));
+			} else if (i > 2) {
+				data.addLiteral(properties[i], Integer.parseInt(values[i]));
+			} else {
+				data.addProperty(properties[i], values[i]);
+			}
 		}	
 	}
 }
