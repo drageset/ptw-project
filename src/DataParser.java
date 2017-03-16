@@ -131,14 +131,19 @@ public class DataParser {
 		}
 	} //end addData
 
+	/**
+	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til xsd:date format, som er yyyy-mm-dd
+	 * @param dmy string
+	 * @return xsd:date format string
+	 */
 	private static String dmyToXSDate(String dmy){
-		System.out.println("dmy: " + dmy);
-		String[] dmyArray = dmy.split(".");
-		System.out.println("length of the dmy array: " + dmyArray.length);
-		for (int i = 0; i < dmyArray.length; i++) {
+		System.out.println("dmy: " + dmy); //test på innholdet i dmy
+		String[] dmyArray = dmy.split("."); //Gjør strengen om til et array som skal ha length 3, hvor første element er dag, andre er måned, og tredje er år.
+		System.out.println("length of the dmy array: " + dmyArray.length); //testen lengden på arrayet
+		for (int i = 0; i < dmyArray.length; i++) { // tester utskrift av hvert element i arrayet
 			System.out.println("dmy array slot " + i + " is " + dmyArray[i]);
 		}
-		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0];
+		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0]; //setter sammen en streng på riktig format
 	}
 
 }
