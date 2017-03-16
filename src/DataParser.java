@@ -4,12 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
@@ -24,8 +24,9 @@ public class DataParser {
 		String curDir = System.getProperty("user.dir");
 		System.out.println("Current sys dir: " + curDir);
 
-		Model defModel = ModelFactory.createDefaultModel();
-		InfModel model = ModelFactory.createRDFSModel(defModel);
+//		Model defModel = ModelFactory.createDefaultModel();
+//		InfModel model = ModelFactory.createRDFSModel(defModel);
+		OntModel model = ModelFactory.createOntologyModel();
 		
 		model.setNsPrefix(prefix, ns);
 
@@ -34,7 +35,7 @@ public class DataParser {
 		model.write(System.out, "TURTLE");
 	}
 
-	private static void addFile (String filePame, Model model) throws FileNotFoundException, IOException {
+	private static void addFile (String filePame, OntModel model) throws FileNotFoundException, IOException {
 		File csvFile = new File(filePame);
 
 		System.out.println("data filepath: " + csvFile.getAbsolutePath());
@@ -58,25 +59,30 @@ public class DataParser {
 			String[] line4 = reader.readLine().split(";");
 			String label = line4[0];
 
-			Resource sensor = model.createResource( ns + tellepunktPropName );
+			
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			sensor.addProperty(RDF.type, trafficSensorClass);
+			Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+			
 			Resource feltClass = model.createResource(ns + "RoadLane");
 			Property roadLaneDirection = model.createProperty(ns + "roadLaneDirection");
 			roadLaneDirection.addProperty(RDFS.domain, feltClass);
+			
 			Property measuresRoadLane = model.createProperty(ns + "measuresRoadLane");
 			measuresRoadLane.addProperty(RDFS.domain, trafficSensorClass);
+			
+			Resource measurementClass = model.createResource(ns + "Measurement");
+			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
+			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+			
 			for(String felt : felt1){
-				Resource laneres = model.createResource(ns + tellepunktPropName + "_" + felt);
-				laneres.addProperty(RDF.type, feltClass);
+				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
 				laneres.addProperty(roadLaneDirection, felt1retning);
 				sensor.addProperty(measuresRoadLane, laneres);
 			}
 			for (String felt : felt2) {
-				Resource laneres = model.createResource(ns + tellepunktPropName + "_" + felt); 
-				laneres.addProperty(RDF.type, feltClass);
+				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass); 
 				laneres.addProperty(roadLaneDirection, felt2retning);
 				sensor.addProperty(measuresRoadLane, laneres);
 			}
@@ -88,7 +94,7 @@ public class DataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties);
+				addData(line, model, properties, trafficMeasurementClass);
 			}
 			reader.close();
 
@@ -98,13 +104,13 @@ public class DataParser {
 
 	}
 
-	private static void addData(String line, Model model, Property[] properties) {
-		Resource person = model.createResource();
-		person.addProperty(RDF.type, FOAF.Person);
+	private static void addData(String line, Model model, Property[] properties, Resource measurementType) {
+		Resource data = model.createResource();
+		data.addProperty(RDF.type, measurementType);
 
 		String[] values = line.split(";");
-		for (int i=0; i<values.length; i++) {
-			person.addProperty(properties[i], values[i]);
+		for (int i = 0; i < values.length; i++) {
+			data.addProperty(properties[i], values[i]);
 		}	
 	}
 }
