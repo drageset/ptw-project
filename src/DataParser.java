@@ -3,6 +3,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
@@ -77,6 +82,8 @@ public class DataParser {
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+			
+			Property dateTime = model.createProperty(ns + "dateTime");
 
 			//			Property date = model.createProperty(ns + "date");
 			//			date.addProperty(RDFS.range, XSD.date);
@@ -120,13 +127,14 @@ public class DataParser {
 
 		String[] values = line.split(";");
 		if(values.length == 9){
-			System.out.println("first value in the line: " + values[0]);
-			data.addProperty(properties[0], dmyToXSDate(values[0]));
-			data.addProperty(properties[1], values[1] + ":00");
+			String xsdDate = dmyToXSDate(values[0]);
+			String xsdTime = values[1] + ":00";
+			data.addProperty(properties[0], xsdDate);
+			data.addProperty(properties[1], xsdTime);
+			data.addProperty(model.getProperty(ns + "dateTime"), xsdDate + "T" + xsdTime);
 			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {
 				data.addLiteral(properties[i], Integer.parseInt(values[i]));
-				//data.addProperty(properties[i], values[i] );
 			}	
 		}
 	} //end addData
@@ -137,13 +145,37 @@ public class DataParser {
 	 * @return xsd:date format string
 	 */
 	private static String dmyToXSDate(String dmy){
-		System.out.println("dmy: " + dmy); //test på innholdet i dmy
-		String[] dmyArray = dmy.split("."); //Gjør strengen om til et array som skal ha length 3, hvor første element er dag, andre er måned, og tredje er år.
-		System.out.println("length of the dmy array: " + dmyArray.length); //testen lengden på arrayet
-		for (int i = 0; i < dmyArray.length; i++) { // tester utskrift av hvert element i arrayet
-			System.out.println("dmy array slot " + i + " is " + dmyArray[i]);
+		try {
+			return calToXSDate(dmyToCal(dmy));
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		return dmyArray[2] + "-" + dmyArray[1] + "-" + dmyArray[0]; //setter sammen en streng på riktig format
+		return "ErrorFailedToParse";
+	}
+
+	/**
+	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til Calendar
+	 * @param dmy string
+	 * @return Date
+	 * @throws ParseException 
+	 */
+	private static Calendar dmyToCal(String dmy) throws ParseException{
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+		cal.setTime(sdf.parse(dmy));
+		return cal;  
+	}
+
+	/**
+	 * Gjør en calendar om til en streng med formatet til xsd:date
+	 * @param cal
+	 * @return xsd:date format string
+	 */
+	private static String calToXSDate(Calendar cal) {
+		Date time = cal.getTime();
+		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		String xsdDate = xsdFormat.format(time);
+		return xsdDate;
 	}
 
 }
