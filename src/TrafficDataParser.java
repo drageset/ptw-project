@@ -30,23 +30,13 @@ public class TrafficDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
-		String outputFilePath = "semanticData.ttl";
-		String notation = "TURTLE";
-		
-		OntModel model = ModelFactory.createOntologyModel(); 
-
-		model.setNsPrefix(prefix, ns);
-
-		addFile(filePath, model);
-
-		writeModelToFile(model, outputFilePath, notation);
-		
-		model.write(System.out, "TURTLE");
+		String outputFilePath = "semanticData";
+		parse(filePath, outputFilePath);
 	}
 	
 	public static void parse(String filePath, String outputFilePath){
 		String notation = "TURTLE";
-
+		outputFilePath += ".ttl";
 		OntModel model = ModelFactory.createOntologyModel(); 
 
 		model.setNsPrefix(prefix, ns);
