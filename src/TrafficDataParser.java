@@ -22,7 +22,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 
-public class DataParser {
+public class TrafficDataParser {
 
 	public final static String prefix = "pt";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
@@ -72,6 +72,8 @@ public class DataParser {
 			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
 			Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+			Literal labelLit = model.createLiteral(label);
+			sensor.addLabel(labelLit);
 
 			Resource feltClass = model.createResource(ns + "RoadLane");
 			Property roadLaneDirection = model.createProperty(ns + "roadLaneDirection");
@@ -163,6 +165,7 @@ public class DataParser {
 	 * @param xsd:dateTime string
 	 * @return XSDDateTime objekt
 	 */
+	@SuppressWarnings("unused")
 	private static XSDDateTime toXSDateTime(String xsdString){
 		Calendar cal;
 		try {
@@ -171,7 +174,6 @@ public class DataParser {
 			cal.setTime(xsdFormat.parse(xsdString));
 			return new XSDDateTime(cal);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
