@@ -43,6 +43,22 @@ public class TrafficDataParser {
 		
 		model.write(System.out, "TURTLE");
 	}
+	
+	public static void parse(String filePath, String outputFilePath){
+		String notation = "TURTLE";
+
+		OntModel model = ModelFactory.createOntologyModel(); 
+
+		model.setNsPrefix(prefix, ns);
+
+		try {
+			addFile(filePath, model);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		writeModelToFile(model, outputFilePath, notation);
+	}
 
 	private static void addFile (String filePath, OntModel model) throws FileNotFoundException, IOException {
 		File csvFile = new File(filePath);
