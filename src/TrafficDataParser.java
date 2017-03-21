@@ -24,7 +24,7 @@ import org.apache.jena.vocabulary.XSD;
 
 public class TrafficDataParser {
 
-	public final static String prefix = "pt";
+	public final static String prefix = "ptw";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 
@@ -103,7 +103,7 @@ public class TrafficDataParser {
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
-				properties[i] = model.createProperty(model.getNsPrefixURI("pt") + headers[i].toLowerCase());
+				properties[i] = model.createProperty(model.getNsPrefixURI(prefix) + headers[i].toLowerCase());
 				if(i > 2){
 					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
 				}
