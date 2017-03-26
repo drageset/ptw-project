@@ -1,6 +1,17 @@
 package no.uib.info216.ptwp.parsers;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 
 public class AirDataParser {
 	
@@ -16,13 +27,66 @@ public class AirDataParser {
 		OntModel model = ModelFactory.createOntologyModel();
 		model.setNsPrefix(prefix, ns);
 		
-		parseData(filePath, model);
+		try {
+			parseData(filePath, model);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 	}
 
-	private static void parseData(String filePath, OntModel model) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected static void parseData(String filePath, OntModel model) throws FileNotFoundException, IOException {
+		File csvFile = new File(filePath);
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader(csvFile));
+
+			String[] header = reader.readLine().split(";");
+			String sensorLabel = header[3];
+			String[] sensorDetails = header[3].replaceAll(" ", "").replaceAll(",", "_").split("|");
+			String sensorLocation = header[0];
+			String pollutantMeasured = header[1];
+			String unitOfMeasurement = header[2];
+			
+			Resource measurementType = model.createResource(ns + "NO2Measurement");
+			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured);
+			
+			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
+			
+			Property startDateTime = model.createProperty(ns + "startDateTime");
+			Property endDateTime = model.createProperty(ns + "endDateTime");
+			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
+			Property[] properties = {startDateTime, endDateTime, mgpsm};
+
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				addData(line, model, properties, measurementType, sensorResource);
+			}
+			reader.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	} //end addFile
+
+	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
+		Resource data = model.createResource();
+		data.addProperty(RDF.type, measurementType);
+		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
+
+		String[] values = line.split(";");
+		if(values.length == 3){
+			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
+			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );;
+			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, xsd + "dateTime");
+			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, xsd + "dateTime");
+			data.addProperty(properties[0], xsdDateTimeStart);
+			data.addProperty(properties[1], xsdDateTimeEnd);
+			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTimeStart);
+			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTimeEnd);
+
+		}
+	} //end addData
 
 }

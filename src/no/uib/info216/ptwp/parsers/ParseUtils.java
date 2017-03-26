@@ -115,4 +115,28 @@ public class ParseUtils {
 		return yyyymm;
 	}
 
+	public static String airPolutionTime_to_XSDateTime(String string) {
+		return calToXSDate(airPolutionTime_ToCal(string));
+	}
+
+	private static Calendar airPolutionTime_ToCal(String string) {
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.ENGLISH);
+		try {
+			cal.setTime(sdf.parse(string));
+			return cal;
+		} catch (ParseException e) {
+			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH);
+			try {
+				cal.setTime(sdfAlt.parse(string));
+				return cal;
+			} catch (ParseException e1) {
+				System.out.println("Error: failed to recognize date time format");
+				e1.printStackTrace();
+			}
+		}
+		return cal;  
+	}
+
 }
