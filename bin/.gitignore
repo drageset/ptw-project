@@ -1,3 +1,4 @@
-ParseTrafficData.class
-TrafficDataParser.class
-WeatherDataParser.class
+/WeatherDataParser.class
+/AirDataParser.class
+/ParseUtils.class
+/no/

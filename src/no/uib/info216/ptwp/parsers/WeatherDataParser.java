@@ -1,16 +1,10 @@
+package no.uib.info216.ptwp.parsers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
-import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Literal;
@@ -38,7 +32,7 @@ public class WeatherDataParser {
 
 		addFile(filePath, model);
 
-		writeModelToFile(model, outputFilePath, notation);
+		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 
 		model.write(System.out, "TURTLE");
 	}
@@ -56,7 +50,7 @@ public class WeatherDataParser {
 			e.printStackTrace();
 		}
 
-		writeModelToFile(model, outputFilePath, notation);
+		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 	}
 
 	private static void addFile (String filePath, OntModel model) throws FileNotFoundException, IOException {
@@ -113,7 +107,7 @@ public class WeatherDataParser {
 				//I drift fra
 				String stMonth = stvalues[2].substring(0, 3);
 				String stYear = stvalues[2].substring(4);
-				String stYearMonth = fixDateFormat(stMonth, stYear);
+				String stYearMonth = ParseUtils.fixDateFormat(stMonth, stYear);
 				Literal yearMonth = model.createTypedLiteral(stYearMonth, xsd + "gYearMonth");
 				wSensor.addProperty(inServiceSince, yearMonth);
 				
@@ -158,6 +152,7 @@ public class WeatherDataParser {
 
 	
 	//Kopi fra trafficParser, ikke endret noe på enda
+	@SuppressWarnings("unused")
 	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
@@ -165,7 +160,7 @@ public class WeatherDataParser {
 
 		String[] values = line.split(";");
 		if(values.length == 9){
-			String xsdDateString = dmyToXSDate(values[0]);
+			String xsdDateString = ParseUtils.dmyToXSDate(values[0]);
 			String xsdTimeString = values[1] + ":00";
 			String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
 			Literal xsdDate = model.createTypedLiteral(xsdDateString, xsd + "date");
@@ -182,109 +177,4 @@ public class WeatherDataParser {
 			}	
 		}
 	} //end addData
-	
-	
-	/**
-	 * Skitten liten metode for å gjøre om mnd.år til XSD.gYearMonth
-	 * @param month
-	 * @param year
-	 * @return String med format som kan brukes til XSD.gYearMonth
-	 */
-	private static String fixDateFormat(String month, String year) {
-		String yyyymm = "";
-		
-		if(Integer.parseInt(year)>17) {
-			yyyymm += ("19" + year + "-");
-		} else yyyymm += ("20" + year + "-");
-		
-		switch (month) {
-		case "jan": yyyymm += "01";	break;
-		case "feb": yyyymm += "02";	break;
-		case "mar": yyyymm += "03";	break;
-		case "apr": yyyymm += "04";	break;
-		case "mai": yyyymm += "05";	break;
-		case "jun": yyyymm += "06";	break;
-		case "jul": yyyymm += "07";	break;
-		case "aug": yyyymm += "08";	break;
-		case "sep": yyyymm += "09";	break;
-		case "okt": yyyymm += "10";	break;
-		case "nov": yyyymm += "11";	break;
-		case "des": yyyymm += "12";	break;
-		}
-		return yyyymm;
-	}
-
-	/**
-	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til xsd:date format, som er yyyy-mm-dd
-	 * @param dmy string
-	 * @return xsd:date format string
-	 */
-	private static String dmyToXSDate(String dmy){
-		try {
-			return calToXSDate(dmyToCal(dmy));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return "ErrorFailedToParse";
-	}
-
-	/**
-	 * Gjør dato på formatet xsd:datetime om til et objekt av typen XSDDateTime
-	 * @param xsd:dateTime string
-	 * @return XSDDateTime objekt
-	 */
-	@SuppressWarnings("unused")
-	private static XSDDateTime toXSDateTime(String xsdString){
-		Calendar cal;
-		try {
-			cal = Calendar.getInstance();
-			SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
-			cal.setTime(xsdFormat.parse(xsdString));
-			return new XSDDateTime(cal);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	/**
-	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til Calendar
-	 * @param dmy string
-	 * @return Date
-	 * @throws ParseException 
-	 */
-	private static Calendar dmyToCal(String dmy) throws ParseException{
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
-		cal.setTime(sdf.parse(dmy));
-		return cal;  
-	}
-
-	/**
-	 * Gjør en calendar om til en streng med formatet til xsd:date
-	 * @param cal
-	 * @return xsd:date format string
-	 */
-	private static String calToXSDate(Calendar cal) {
-		Date time = cal.getTime();
-		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-		String xsdDate = xsdFormat.format(time);
-		return xsdDate;
-	}
-
-	/**
-	 * Writes a model to a file in a chosen notation
-	 * @param model The RDF model that you wish to write to a file
-	 * @param filename The filename of the file that you wish to write the RDF model to
-	 * @param notation The notation (i.e. TURTLE, JSON-LD) that you wish the file to be written in
-	 */
-	private static void writeModelToFile(Model model, String filename, String notation){
-		try{
-			PrintWriter writer = new PrintWriter(filename, "UTF-8");
-			model.write(writer, notation);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-}
+}// end class
