@@ -20,19 +20,25 @@ public class AirDataParser {
 	public final static String ns = "http://www.PTWproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "airdata.csv";
-		String outputFilePath = "semanticAirData.ttl";
+		String outputFilePath = "semanticAirData";
+		parseToTurtle(filePath, outputFilePath);
+	}
+	
+	public static void parseToTurtle(String filePath, String outputFilePath){
 		String notation = "TURTLE";
+		outputFilePath += ".ttl";
+		OntModel model = ModelFactory.createOntologyModel(); 
 
-		OntModel model = ModelFactory.createOntologyModel();
 		model.setNsPrefix(prefix, ns);
-		
+
 		try {
 			parseData(filePath, model);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 	}
 
