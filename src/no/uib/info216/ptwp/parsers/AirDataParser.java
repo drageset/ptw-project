@@ -48,7 +48,7 @@ public class AirDataParser {
 			String pollutantMeasured = sensorDetails[1];
 			String unitOfMeasurement = sensorDetails[2];
 			
-			Resource measurementType = model.createResource(ns + "NO2Measurement");
+			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
 			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
