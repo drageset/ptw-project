@@ -42,14 +42,14 @@ public class AirDataParser {
 			reader = new BufferedReader(new FileReader(csvFile));
 
 			String[] header = reader.readLine().split(";");
-			String sensorLabel = header[3];
-			String[] sensorDetails = header[3].replaceAll(" ", "").replaceAll(",", "_").split("|");
-			String sensorLocation = header[0];
-			String pollutantMeasured = header[1];
-			String unitOfMeasurement = header[2];
+			String sensorLabel = header[2];
+			String[] sensorDetails = header[2].replaceAll(", ","_").split(" \\| ");
+			String sensorLocation = sensorDetails[0];
+			String pollutantMeasured = sensorDetails[1];
+			String unitOfMeasurement = sensorDetails[2];
 			
 			Resource measurementType = model.createResource(ns + "NO2Measurement");
-			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured);
+			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
 			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
 			
@@ -58,11 +58,12 @@ public class AirDataParser {
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
 
-			String line = null;
+			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				addData(line, model, properties, measurementType, sensorResource);
 			}
 			reader.close();
+			model.write(System.out, "TURTLE");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,10 +82,10 @@ public class AirDataParser {
 			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );;
 			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, xsd + "dateTime");
 			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, xsd + "dateTime");
+			Literal measurementValue = model.createTypedLiteral(values[2], xsd + "float");
 			data.addProperty(properties[0], xsdDateTimeStart);
 			data.addProperty(properties[1], xsdDateTimeEnd);
-			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTimeStart);
-			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTimeEnd);
+			data.addProperty(properties[2], measurementValue);
 
 		}
 	} //end addData

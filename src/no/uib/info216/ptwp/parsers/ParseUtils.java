@@ -116,7 +116,14 @@ public class ParseUtils {
 	}
 
 	public static String airPolutionTime_to_XSDateTime(String string) {
-		return calToXSDate(airPolutionTime_ToCal(string));
+		return calToXSDateTime(airPolutionTime_ToCal(string));
+	}
+
+	private static String calToXSDateTime(Calendar cal) {
+		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+		Date time = cal.getTime();
+		String xsdDateTime = xsdFormat.format(time);
+		return xsdDateTime;
 	}
 
 	private static Calendar airPolutionTime_ToCal(String string) {
