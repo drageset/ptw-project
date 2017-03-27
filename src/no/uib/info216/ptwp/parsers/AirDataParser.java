@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 public class AirDataParser {
 	
@@ -46,18 +47,22 @@ public class AirDataParser {
 			String[] sensorDetails = header[2].replaceAll(", ","_").split(" \\| ");
 			String sensorLocation = sensorDetails[0];
 			String pollutantMeasured = sensorDetails[1];
-			String unitOfMeasurement = sensorDetails[2];
+			String unit = sensorDetails[2];
 			
-			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
-			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
-			
+			Property unitOfMeasurement = model.createProperty(ns + "unitOfMeasurement");
+			@SuppressWarnings("unused")
 			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
-			
 			Property startDateTime = model.createProperty(ns + "startDateTime");
 			Property endDateTime = model.createProperty(ns + "endDateTime");
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
-
+			
+			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
+			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
+			
+			sensorResource.addProperty(RDFS.label, sensorLabel);
+			sensorResource.addProperty(unitOfMeasurement, unit);
+			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				addData(line, model, properties, measurementType, sensorResource);
