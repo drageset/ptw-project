@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
@@ -21,10 +22,13 @@ public class TrafficDataParser {
 	public final static String prefix = "ptw";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
+	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
+	public final static String qb = "http://purl.org/linked-data/cube#";
+	
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
-		String outputFilePath = "semanticData";
+		String outputFilePath = "semanticTrafficData";
 		parseToTurtle(filePath, outputFilePath);
 	}
 	
@@ -67,13 +71,16 @@ public class TrafficDataParser {
 			String[] line4 = reader.readLine().split(";");
 			String label = line4[0];
 
-
+			Resource dataSetClass = model.createResource( ns + "TrafficDataSet");
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
+			dataSetClass.addProperty(OWL.sameAs, qb + "DataSet");
+			dataSetClass.addProperty(RDFS.label, "Traffic Data Set");
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			Individual sensor = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+			Individual sensorResource = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
 			Literal labelLit = model.createLiteral(label);
-			sensor.addLabel(labelLit);
+			sensorResource.addLabel(labelLit);
+			sensorClass.addProperty(OWL.sameAs, ssn + "Sensor");
 
 			Resource feltClass = model.createResource(ns + "RoadLane");
 			Property roadLaneDirection = model.createProperty(ns + "roadLaneDirection");
@@ -85,6 +92,8 @@ public class TrafficDataParser {
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+			measurementClass.addProperty(RDFS.subClassOf, dataSetClass);
+			trafficMeasurementClass.addProperty(OWL.sameAs, ssn + "Observation");
 			
 			Property dateTime = model.createProperty(ns + "dateTime");
 			dateTime.addProperty(RDFS.range, XSD.dateTime);
@@ -92,12 +101,12 @@ public class TrafficDataParser {
 			for(String felt : felt1){
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
 				laneres.addProperty(roadLaneDirection, felt1retning);
-				sensor.addProperty(measuresRoadLane, laneres);
+				sensorResource.addProperty(measuresRoadLane, laneres);
 			}
 			for (String felt : felt2) {
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass); 
 				laneres.addProperty(roadLaneDirection, felt2retning);
-				sensor.addProperty(measuresRoadLane, laneres);
+				sensorResource.addProperty(measuresRoadLane, laneres);
 			}
 
 			String[] headers = reader.readLine().split(";");
@@ -111,7 +120,7 @@ public class TrafficDataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, trafficMeasurementClass, sensor);
+				addData(line, model, properties, trafficMeasurementClass, sensorResource);
 			}
 			reader.close();
 

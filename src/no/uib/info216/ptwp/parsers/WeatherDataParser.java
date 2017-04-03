@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
@@ -20,6 +21,7 @@ public class WeatherDataParser {
 	public final static String prefix = "ptw";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
+	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "wdata.csv";
@@ -69,6 +71,7 @@ public class WeatherDataParser {
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource weatherSensorClass = model.createResource( ns + "WeatherSensor" );
 			weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
+			sensorClass.addProperty(OWL.sameAs, ssn + "Sensor");
 
 			Property inServiceSince = model.createProperty(ns + stHeaders[2]);
 			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
@@ -81,6 +84,7 @@ public class WeatherDataParser {
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource weatherMeasurementClass = model.createResource(ns + "WeatherMeasurement");
 			weatherMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+			weatherMeasurementClass.addProperty(OWL.sameAs, ssn + "Observation");	
 
 			Property dateTime = model.createProperty(ns + "dateTime");
 			dateTime.addProperty(RDFS.range, XSD.dateTime);
