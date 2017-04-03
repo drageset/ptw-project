@@ -146,4 +146,16 @@ public class ParseUtils {
 		return cal;  
 	}
 
+	public static String airPolutionTime_to_XSDTime(String string) {
+		
+		return calToXSDtime(airPolutionTime_ToCal(string));
+	}
+
+	private static String calToXSDtime(Calendar cal) {
+		SimpleDateFormat xsdTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+		Date time = cal.getTime();
+		String xsdTime = xsdTimeFormat.format(time);
+		return xsdTime;
+	}
+
 }

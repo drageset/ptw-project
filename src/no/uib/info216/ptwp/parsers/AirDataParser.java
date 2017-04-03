@@ -60,6 +60,8 @@ public class AirDataParser {
 			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
 			Property startDateTime = model.createProperty(ns + "startDateTime");
 			Property endDateTime = model.createProperty(ns + "endDateTime");
+			Property endTime = model.createProperty(ns + "endTime");
+			Property startTime = model.createProperty(ns + "startTime");
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
 			
@@ -90,12 +92,18 @@ public class AirDataParser {
 		String[] values = line.split(";");
 		if(values.length == 3){
 			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
-			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );;
+			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
+			String xsdTimeEndString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
+			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
 			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, xsd + "dateTime");
 			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, xsd + "dateTime");
+			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, xsd + "time");
+			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString, xsd + "time");
 			Literal measurementValue = model.createTypedLiteral(values[2], xsd + "float");
 			data.addProperty(properties[0], xsdDateTimeStart);
 			data.addProperty(properties[1], xsdDateTimeEnd);
+			data.addProperty(model.getProperty(ns + "endTime"), xsdTimeEnd);
+			data.addProperty(model.getProperty(ns + "startTime"), xsdTimeStart);
 			data.addProperty(properties[2], measurementValue);
 
 		}
