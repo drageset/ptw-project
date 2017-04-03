@@ -32,6 +32,11 @@ public class TrafficDataParser {
 		parseToTurtle(filePath, outputFilePath);
 	}
 	
+	/**
+	 * This method parses information from a traffic data CSV file and writes it out in a turtle file
+	 * @param filePath of the original CSV file
+	 * @param outputFilePath including name of the new TURTLE file, not included ".ttl" file ending.
+	 */
 	public static void parseToTurtle(String filePath, String outputFilePath){
 		String notation = "TURTLE";
 		outputFilePath += ".ttl";
@@ -48,6 +53,14 @@ public class TrafficDataParser {
 		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 	}
 
+	/**
+	 * This method reads the CSV files containing data about traffic from Vegvesenet, 
+	 * and turns the information into sensible triples according to our ontology.
+	 * @param filePath is the input CSV file that is read from.
+	 * @param model is the model in which we add the triples about our data.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	protected static void parseData(String filePath, OntModel model) throws FileNotFoundException, IOException {
 		File csvFile = new File(filePath);
 		BufferedReader reader;
@@ -128,7 +141,7 @@ public class TrafficDataParser {
 			e.printStackTrace();
 		}
 
-	} //end addFile
+	} //end parseData
 
 	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();

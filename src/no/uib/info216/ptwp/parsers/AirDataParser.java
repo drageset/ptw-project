@@ -11,7 +11,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
@@ -20,8 +19,6 @@ public class AirDataParser {
 	public final static String prefix = "ptw";
 	public final static String ns = "http://www.PTWproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
-	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
-	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "airdata.csv";
@@ -66,23 +63,18 @@ public class AirDataParser {
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
 			
-			Resource dataSetClass = model.createResource( ns + "AirDataSet");
 			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-			dataSetClass.addProperty(OWL.sameAs, qb + "DataSet");
-			dataSetClass.addProperty(RDFS.label, "Traffic Data Set");
-			measurementType.addProperty(OWL.sameAs, ssn + "Observation");			
 			sensorResource.addProperty(RDFS.label, sensorLabel);
 			sensorResource.addProperty(unitOfMeasurement, unit);
-			sensorResource.addProperty(OWL.sameAs, ssn + "Sensor");
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				addData(line, model, properties, measurementType, sensorResource);
 			}
 			reader.close();
-//			model.write(System.out, "TURTLE");
+			model.write(System.out, "TURTLE");
 
 		} catch (Exception e) {
 			e.printStackTrace();
