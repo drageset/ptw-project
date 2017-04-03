@@ -24,7 +24,7 @@ public class AirDataParser {
 	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "airdata.csv";
+		String filePath = "NO2dataRolland.csv";
 		String outputFilePath = "semanticAirData";
 		parseToTurtle(filePath, outputFilePath);
 	}
@@ -35,6 +35,8 @@ public class AirDataParser {
 		OntModel model = ModelFactory.createOntologyModel(); 
 
 		model.setNsPrefix(prefix, ns);
+		model.setNsPrefix("ssn", ssn);
+		model.setNsPrefix("qb", qb);
 
 		try {
 			parseData(filePath, model);
@@ -66,12 +68,14 @@ public class AirDataParser {
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
 			
-			Resource dataSetClass = model.createResource( ns + "AirDataSet");
+			Property belongsToDataSet = model.createProperty(ns + "belongsToDataSet");
+			belongsToDataSet.addProperty(OWL.sameAs, qb + "dataSet");
+			
+			Resource dataSet = model.createResource(ns + "DataSet");
 			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-			dataSetClass.addProperty(OWL.sameAs, qb + "DataSet");
-			dataSetClass.addProperty(RDFS.label, "Traffic Data Set");
+			dataSet.addProperty(OWL.sameAs, qb + "DataSet");
 			measurementType.addProperty(OWL.sameAs, ssn + "Observation");			
 			sensorResource.addProperty(RDFS.label, sensorLabel);
 			sensorResource.addProperty(unitOfMeasurement, unit);
@@ -79,7 +83,7 @@ public class AirDataParser {
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, measurementType, sensorResource);
+				addData(line, model, properties, dataSet, measurementType, sensorResource);
 			}
 			reader.close();
 //			model.write(System.out, "TURTLE");
@@ -90,10 +94,11 @@ public class AirDataParser {
 
 	} //end addFile
 
-	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Property[] properties, Resource dataSet, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
+		data.addProperty(model.getProperty(ns + "belongsToDataSet"), dataSet);
 
 		String[] values = line.split(";");
 		if(values.length == 3){
