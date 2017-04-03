@@ -1,4 +1,5 @@
 package no.uib.info216.ptwp.parsers;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,20 +25,22 @@ public class TrafficDataParser {
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
 	public final static String qb = "http://purl.org/linked-data/cube#";
-	
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "data.csv";
 		String outputFilePath = "semanticTrafficData";
 		parseToTurtle(filePath, outputFilePath);
 	}
-	
-	public static void parseToTurtle(String filePath, String outputFilePath){
+
+	public static void parseToTurtle(String filePath, String outputFilePath) {
 		String notation = "TURTLE";
 		outputFilePath += ".ttl";
-		OntModel model = ModelFactory.createOntologyModel(); 
+		OntModel model = ModelFactory.createOntologyModel();
 
 		model.setNsPrefix(prefix, ns);
+		model.setNsPrefix("ssn", ssn);
+		model.setNsPrefix("qb", qb);
+		
 
 		try {
 			parseData(filePath, model);
@@ -71,13 +74,12 @@ public class TrafficDataParser {
 			String[] line4 = reader.readLine().split(";");
 			String label = line4[0];
 
-			Resource dataSetClass = model.createResource( ns + "TrafficDataSet");
-			Resource sensorClass = model.createResource( ns + "Sensor" );
-			Resource trafficSensorClass = model.createResource( ns + "TrafficSensor" );
-			dataSetClass.addProperty(OWL.sameAs, qb + "DataSet");
-			dataSetClass.addProperty(RDFS.label, "Traffic Data Set");
+			Resource dataSet = model.createResource(ns + "DataSet");
+			Resource sensorClass = model.createResource(ns + "Sensor");
+			Resource trafficSensorClass = model.createResource(ns + "TrafficSensor");
+			dataSet.addProperty(OWL.sameAs, qb + "DataSet");
 			trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			Individual sensorResource = model.createIndividual( ns + tellepunktPropName, trafficSensorClass);
+			Individual sensorResource = model.createIndividual(ns + tellepunktPropName, trafficSensorClass);
 			Literal labelLit = model.createLiteral(label);
 			sensorResource.addLabel(labelLit);
 			sensorClass.addProperty(OWL.sameAs, ssn + "Sensor");
@@ -88,39 +90,43 @@ public class TrafficDataParser {
 
 			Property measuresRoadLane = model.createProperty(ns + "measuresRoadLane");
 			measuresRoadLane.addProperty(RDFS.domain, trafficSensorClass);
+			
+			Property belongsToDataSet = model.createProperty(ns + "belongsToDataSet");
+			belongsToDataSet.addProperty(OWL.sameAs, qb + "dataSet");
 
 			Resource measurementClass = model.createResource(ns + "Measurement");
 			Resource trafficMeasurementClass = model.createResource(ns + "TrafficMeasurement");
 			trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
-			measurementClass.addProperty(RDFS.subClassOf, dataSetClass);
-			trafficMeasurementClass.addProperty(OWL.sameAs, ssn + "Observation");
-			
+			measurementClass.addProperty(RDFS.subClassOf, dataSet);
+			measurementClass.addProperty(OWL.sameAs, ssn + "Observation");
+			trafficMeasurementClass.addProperty(belongsToDataSet, dataSet);
+	
 			Property dateTime = model.createProperty(ns + "dateTime");
 			dateTime.addProperty(RDFS.range, XSD.dateTime);
 
-			for(String felt : felt1){
+			for (String felt : felt1) {
 				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
 				laneres.addProperty(roadLaneDirection, felt1retning);
 				sensorResource.addProperty(measuresRoadLane, laneres);
 			}
 			for (String felt : felt2) {
-				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass); 
+				Individual laneres = model.createIndividual(ns + tellepunktPropName + "_" + felt, feltClass);
 				laneres.addProperty(roadLaneDirection, felt2retning);
 				sensorResource.addProperty(measuresRoadLane, laneres);
 			}
 
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
-			for (int i=0; i<headers.length; i++){
+			for (int i = 0; i < headers.length; i++) {
 				properties[i] = model.createProperty(model.getNsPrefixURI(prefix) + headers[i].toLowerCase());
-				if(i > 2){
+				if (i > 2) {
 					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
 				}
 			}
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, trafficMeasurementClass, sensorResource);
+				addData(line, model, properties, dataSet, trafficMeasurementClass, sensorResource);
 			}
 			reader.close();
 
@@ -128,15 +134,17 @@ public class TrafficDataParser {
 			e.printStackTrace();
 		}
 
-	} //end addFile
+	} // end addFile
 
-	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Property[] properties, Resource dataSet, Resource measurementType,
+			Resource sensor) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
+		data.addProperty(model.getProperty(ns + "belongsToDataSet"), dataSet);
 
 		String[] values = line.split(";");
-		if(values.length == 9){
+		if (values.length == 9) {
 			String xsdDateString = ParseUtils.dmyToXSDate(values[0]);
 			String xsdTimeString = values[1] + ":00";
 			String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
@@ -146,11 +154,12 @@ public class TrafficDataParser {
 			data.addProperty(properties[0], xsdDate);
 			data.addProperty(properties[1], xsdTime);
 			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTime);
-			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
+			data.addProperty(model.getProperty(ns + "roadLaneMeasured"),
+					model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {
 				Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
 				data.addLiteral(properties[i], value);
-			}	
+			}
 		}
-	} //end addData
+	} // end addData
 }
