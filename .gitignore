@@ -3,3 +3,4 @@ semanticData.ttl
 semanticWData.ttl
 semanticTrafficData.ttl
 /semanticAirData.ttl
+*.class
