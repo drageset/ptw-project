@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
@@ -19,9 +20,11 @@ public class AirDataParser {
 	public final static String prefix = "ptw";
 	public final static String ns = "http://www.ptwproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
+	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
+	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "airdata.csv";
+		String filePath = "NO2dataRolland.csv";
 		String outputFilePath = "semanticAirData";
 		parseToTurtle(filePath, outputFilePath);
 	}
@@ -32,6 +35,8 @@ public class AirDataParser {
 		OntModel model = ModelFactory.createOntologyModel(); 
 
 		model.setNsPrefix(prefix, ns);
+		model.setNsPrefix("ssn", ssn);
+		model.setNsPrefix("qb", qb);
 
 		try {
 			parseData(filePath, model);
@@ -65,18 +70,26 @@ public class AirDataParser {
 			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
 			Property[] properties = {startDateTime, endDateTime, mgpsm};
 			
+
+			Property belongsToDataSet = model.createProperty(ns + "belongsToDataSet");
+			belongsToDataSet.addProperty(OWL.sameAs, qb + "dataSet");
+			
+			Resource dataSet = model.createResource(ns + "DataSet");
 			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
+			dataSet.addProperty(OWL.sameAs, qb + "DataSet");
+			measurementType.addProperty(OWL.sameAs, ssn + "Observation");			
+
 			sensorResource.addProperty(RDFS.label, sensorLabel);
 			sensorResource.addProperty(unitOfMeasurement, unit);
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, measurementType, sensorResource);
+				addData(line, model, properties, dataSet, measurementType, sensorResource);
 			}
 			reader.close();
-			model.write(System.out, "TURTLE");
+			//model.write(System.out, "TURTLE");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,10 +97,11 @@ public class AirDataParser {
 
 	} //end addFile
 
-	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Property[] properties, Resource dataSet, Resource measurementType, Resource sensor) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
+		data.addProperty(model.getProperty(ns + "belongsToDataSet"), dataSet);
 
 		String[] values = line.split(";");
 		if(values.length == 3){
