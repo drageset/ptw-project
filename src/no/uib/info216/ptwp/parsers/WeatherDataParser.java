@@ -19,7 +19,7 @@ import org.apache.jena.vocabulary.XSD;
 
 public class WeatherDataParser {
 	public final static String prefix = "ptw";
-	public final static String ns = "http://www.PTWproject.org/ontology#";
+	public final static String ns = "http://www.ptwproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
 

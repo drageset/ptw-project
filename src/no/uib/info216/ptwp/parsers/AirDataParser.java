@@ -17,7 +17,7 @@ import org.apache.jena.vocabulary.RDFS;
 public class AirDataParser {
 	
 	public final static String prefix = "ptw";
-	public final static String ns = "http://www.PTWproject.org/ontology#";
+	public final static String ns = "http://www.ptwproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -99,7 +99,7 @@ public class AirDataParser {
 			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, xsd + "dateTime");
 			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, xsd + "time");
 			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString, xsd + "time");
-			Literal measurementValue = model.createTypedLiteral(values[2], xsd + "float");
+			Literal measurementValue = model.createTypedLiteral(values[2].replace(",", "."), xsd + "float");
 			data.addProperty(properties[0], xsdDateTimeStart);
 			data.addProperty(properties[1], xsdDateTimeEnd);
 			data.addProperty(model.getProperty(ns + "endTime"), xsdTimeEnd);
