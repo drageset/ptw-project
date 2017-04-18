@@ -159,8 +159,8 @@ public class WeatherDataParser {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		String[] values = line.split(";");
-		//ingen getLiteral()-metode, funker getResource()?
-		data.addProperty(model.getProperty(ns + "measuredByStation"), model.getResource(ns) + values[0]);
+		//ingen getLiteral()-metode, ser ut som det funker med getResource()
+		data.addProperty(model.getProperty(ns + "measuredByStation"), model.getResource(ns + values[0]));
 
 		String[] rawDate = values[1].split("-");
 //		System.out.println(rawDate[0]);
