@@ -22,32 +22,32 @@ public class WeatherDataParser {
 	public final static String ns = "http://www.ptwproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
+	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "wdata.csv";
-		String outputFilePath = "semanticWData.ttl";
-		String notation = "TURTLE";
-
-		OntModel model = ModelFactory.createOntologyModel(); 
-
-		model.setNsPrefix(prefix, ns);
-
-		addFile(filePath, model);
-
-		ParseUtils.writeModelToFile(model, outputFilePath, notation);
-
-		model.write(System.out, "TURTLE");
+		String outputFilePath = "semanticWData";
+		parseToTurtle(filePath, outputFilePath);
 	}
-
-	public static void parse(String filePath, String outputFilePath){
+	
+	/**
+	 * This method parses information from a traffic data CSV file and writes it out in a turtle file
+	 * @param filePath of the original CSV file
+	 * @param outputFilePath including name of the new TURTLE file, not included ".ttl" file ending.
+	 */
+	public static void parseToTurtle(String filePath, String outputFilePath){
+		
 		String notation = "TURTLE";
-
-		OntModel model = ModelFactory.createOntologyModel(); 
+		outputFilePath += ".ttl";
+		OntModel model = ModelFactory.createOntologyModel();
 
 		model.setNsPrefix(prefix, ns);
+		model.setNsPrefix("ssn", ssn);
+		model.setNsPrefix("qb", qb);
+		
 
 		try {
-			addFile(filePath, model);
+			parseData(filePath, model);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,7 +55,7 @@ public class WeatherDataParser {
 		ParseUtils.writeModelToFile(model, outputFilePath, notation);
 	}
 
-	private static void addFile (String filePath, OntModel model) throws FileNotFoundException, IOException {
+	private static void parseData (String filePath, OntModel model) throws FileNotFoundException, IOException {
 		File csvFile = new File(filePath);
 		BufferedReader reader;
 		try {
@@ -68,6 +68,7 @@ public class WeatherDataParser {
 			
 			String[] stHeaders = reader.readLine().split(";");
 			
+			Resource dataSet = model.createResource(ns + "DataSet");
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource weatherSensorClass = model.createResource( ns + "WeatherSensor" );
 			weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
@@ -105,8 +106,10 @@ public class WeatherDataParser {
 				//Sikkert lurt å også legge til nummer og eller navn hver for seg som properties
 				String stNum = stvalues[0];
 				String stName = stvalues[1];
-				String stIndividual = (stNum + "_" + stName).replaceAll(" ", "").replaceAll("-", "_");
-				Individual wSensor = model.createIndividual(ns + stIndividual, weatherSensorClass);
+//				String stIndividual = (stNum + "_" + stName).replaceAll(" ", "").replaceAll("-", "_");
+				Individual wSensor = model.createIndividual(ns + stNum, weatherSensorClass);
+				Literal nameLabel = model.createLiteral(stName);
+				wSensor.addLabel(nameLabel);
 				
 				//I drift fra
 				String stMonth = stvalues[2].substring(0, 3);
@@ -128,57 +131,51 @@ public class WeatherDataParser {
 			}
 
 			//38 linjer med drit
-			for (int j = 1; j < 38; j++) {
+			for (int j = 0; j < 38; j++) {
 				reader.readLine();
 			}
 
+			String[] headers = reader.readLine().split(";");
+			Property[] properties = new Property[headers.length];
+			for (int i=0; i<headers.length; i++){
+				properties[i] = model.createProperty(model.getNsPrefixURI(prefix) + headers[i].toLowerCase());
+				if(i > 1){
+					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
+				}
+			}
 
-//			String[] headers = reader.readLine().split(";");
-//			Property[] properties = new Property[headers.length];
-//			for (int i=0; i<headers.length; i++){
-//				properties[i] = model.createProperty(model.getNsPrefixURI(prefix) + headers[i].toLowerCase());
-//				if(i > 2){
-//					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
-//				}
-//			}
-
-//			String line = null;
-//			while ((line = reader.readLine()) != null) {
-//				addData(line, model, properties, weatherMeasurementClass, sensor);
-//			}
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				addData(line, model, properties, dataSet, weatherMeasurementClass);
+			}
 			reader.close();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-	} //end addFile
+	} //end parseData
 
 	
-	//Kopi fra trafficParser, ikke endret noe på enda
-	@SuppressWarnings("unused")
-	private static void addData(String line, Model model, Property[] properties, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Property[] properties, Resource Dataset, Resource measurementType) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
-		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
-
 		String[] values = line.split(";");
-		if(values.length == 9){
-			String xsdDateString = ParseUtils.dmyToXSDate(values[0]);
-			String xsdTimeString = values[1] + ":00";
-			String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
-			Literal xsdDate = model.createTypedLiteral(xsdDateString, xsd + "date");
-			Literal xsdTime = model.createTypedLiteral(xsdTimeString, xsd + "time");
-			Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, xsd + "dateTime");
-			data.addProperty(properties[0], xsdDate);
-			data.addProperty(properties[1], xsdTime);
-			data.addProperty(model.getProperty(ns + "dateTime"), xsdDateTime);
-			data.addProperty(model.getProperty(ns + "roadLaneMeasured"), model.getResource(sensor.getURI() + "_" + values[2]));
-			for (int i = 3; i < values.length; i++) {
-				Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
-				data.addLiteral(properties[i], value);
-				//data.addLiteral(properties[i], Integer.parseInt(values[i]));
-			}	
+		//ingen getLiteral()-metode, funker getResource()?
+		data.addProperty(model.getProperty(ns + "measuredByStation"), model.getResource(ns) + values[0]);
+
+		String[] rawDate = values[1].split("-");
+//		System.out.println(rawDate[0]);
+//		System.out.println(rawDate[1]);
+		String xsdDateString = ParseUtils.dmyToXSDate(rawDate[0]);
+		String xsdTimeString = rawDate[1];
+		String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
+		Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, xsd + "dateTime");
+		data.addProperty(properties[1], xsdDateTime);
+		
+		for (int i = 2; i < values.length; i++) {
+			Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
+			data.addLiteral(properties[i], value);
 		}
+			
+		
 	} //end addData
 }// end class

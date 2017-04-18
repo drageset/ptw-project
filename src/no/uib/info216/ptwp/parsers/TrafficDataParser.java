@@ -27,7 +27,7 @@ public class TrafficDataParser {
 	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "data.csv";
+		String filePath = "tdata.csv";
 		String outputFilePath = "semanticTrafficData";
 		parseToTurtle(filePath, outputFilePath);
 	}

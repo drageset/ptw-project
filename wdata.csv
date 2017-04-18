@@ -46,7 +46,7 @@ Ingen data for: 50503, 50540, 50540, 50540, 50540, 50540, 50540, 50540, 50540, 5
 Dataverdi merket x betyr at kvaliteten er 'Svært usikker' (Nivå 5 eller mer).;;;;;;;
 ********************************************;;;;;;;
 ;;;;;;;
-Stnr;Dato-Time(NMT);RR_1;FF;DD;TA;WAWA;SA
+measuredByStation;dateTime;PrecipitationInMM;windSpeed10MAboveGround;windDirectionDegrees;airTemperatureCelsius;observedWeatherWAWACode;snowDepthCM
 50480;23.01.2017-02:00;0,1; ; ;4,1; ; 
 50480;23.01.2017-03:00;0,2; ; ;4; ; 
 50480;23.01.2017-04:00;0,2; ; ;4,1; ; 
@@ -30684,7 +30684,3 @@ Stnr;Dato-Time(NMT);RR_1;FF;DD;TA;WAWA;SA
 50865;28.02.2017-21:00;0;1;278;1,2; ; 
 50865;28.02.2017-22:00;0;0,1;6;0,1; ; 
 50865;28.02.2017-23:00;0;0,3;36;-0,7; ; 
-;;;;;;;
-;;;;;;;
---------------------------------------------;;;;;;;
-Data er gyldig per 02.03.2017  (CC BY 3.0), Meteorologisk institutt (MET);;;;;;;
