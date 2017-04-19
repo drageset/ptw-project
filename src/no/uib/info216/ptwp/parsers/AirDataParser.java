@@ -9,7 +9,6 @@ import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
@@ -17,13 +16,7 @@ import org.apache.jena.vocabulary.RDFS;
 
 public class AirDataParser {
 	
-	public final static String prefix = "ptw";
-	public final static String ns = "http://www.ptwproject.org/ontology#";
-	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
-	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
-	public final static String qb = "http://purl.org/linked-data/cube#";
-
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static void main(String[] args) throws FileNotFoundException, IOException {	
 		String filePath = "NO2dataRolland.csv";
 		String outputFilePath = "semanticAirData";
 		parseToTurtle(filePath, outputFilePath);
@@ -34,9 +27,10 @@ public class AirDataParser {
 		outputFilePath += ".ttl";
 		OntModel model = ModelFactory.createOntologyModel(); 
 
-		model.setNsPrefix(prefix, ns);
-		model.setNsPrefix("ssn", ssn);
-		model.setNsPrefix("qb", qb);
+		model.setNsPrefix(Vocab.prefix, Vocab.ns);
+		model.setNsPrefix("ssn", Vocab.ssn);
+		model.setNsPrefix("qb", Vocab.qb);
+		model.setNsPrefix("time", Vocab.time);
 
 		try {
 			parseData(filePath, model);
@@ -48,6 +42,7 @@ public class AirDataParser {
 	}
 
 	protected static void parseData(String filePath, OntModel model) throws FileNotFoundException, IOException {
+		Vocab vocab = Vocab.getInstance();
 		File csvFile = new File(filePath);
 		BufferedReader reader;
 		try {
@@ -60,33 +55,19 @@ public class AirDataParser {
 			String pollutantMeasured = sensorDetails[1];
 			String unit = sensorDetails[2];
 			
-			Property unitOfMeasurement = model.createProperty(ns + "unitOfMeasurement");
-			@SuppressWarnings("unused")
-			Property measuredBySensor = model.createProperty(ns + "measuredBySensor");
-			Property startDateTime = model.createProperty(ns + "startDateTime");
-			Property endDateTime = model.createProperty(ns + "endDateTime");
-			Property endTime = model.createProperty(ns + "endTime");
-			Property startTime = model.createProperty(ns + "startTime");
-			Property mgpsm = model.createProperty(ns + "microGramsPerMeterCubed");
-			Property[] properties = {startDateTime, endDateTime, mgpsm};
+			Resource dataSet = model.createResource(Vocab.ns + "DataSet");
+			Resource measurementType = model.createResource(Vocab.ns + pollutantMeasured + "Measurement");
+			Resource sensorResource = model.createResource(Vocab.ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-
-			Property belongsToDataSet = model.createProperty(ns + "belongsToDataSet");
-			belongsToDataSet.addProperty(OWL.sameAs, qb + "dataSet");
-			
-			Resource dataSet = model.createResource(ns + "DataSet");
-			Resource measurementType = model.createResource(ns + pollutantMeasured + "Measurement");
-			Resource sensorResource = model.createResource(ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
-			
-			dataSet.addProperty(OWL.sameAs, qb + "DataSet");
-			measurementType.addProperty(OWL.sameAs, ssn + "Observation");			
+			dataSet.addProperty(OWL.sameAs, Vocab.qb + "DataSet");
+			measurementType.addProperty(OWL.sameAs, Vocab.ssn + "Observation");			
 
 			sensorResource.addProperty(RDFS.label, sensorLabel);
-			sensorResource.addProperty(unitOfMeasurement, unit);
+			sensorResource.addProperty(vocab.unitOfMeasurement, unit);
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, dataSet, measurementType, sensorResource);
+				addData(line, model, dataSet, measurementType, sensorResource);
 			}
 			reader.close();
 			//model.write(System.out, "TURTLE");
@@ -97,28 +78,48 @@ public class AirDataParser {
 
 	} //end addFile
 
-	private static void addData(String line, Model model, Property[] properties, Resource dataSet, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Resource dataSet, Resource measurementType, Resource sensor) {
+		Vocab vocab = Vocab.getInstance();
+		
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
-		data.addProperty(model.getProperty(ns + "measuredBySensor"), sensor);
-		data.addProperty(model.getProperty(ns + "belongsToDataSet"), dataSet);
+		data.addProperty(vocab.measuredBySensor, sensor);
+		data.addProperty(vocab.belongsToDataSet, dataSet);
 
 		String[] values = line.split(";");
 		if(values.length == 3){
+			
+			//Prepping strings for creating XSD date time/time literals
 			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
 			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
 			String xsdTimeEndString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
 			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
-			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, xsd + "dateTime");
-			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, xsd + "dateTime");
-			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, xsd + "time");
-			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString, xsd + "time");
-			Literal measurementValue = model.createTypedLiteral(values[2].replace(",", "."), xsd + "float");
-			data.addProperty(properties[0], xsdDateTimeStart);
-			data.addProperty(properties[1], xsdDateTimeEnd);
-			data.addProperty(model.getProperty(ns + "endTime"), xsdTimeEnd);
-			data.addProperty(model.getProperty(ns + "startTime"), xsdTimeStart);
-			data.addProperty(properties[2], measurementValue);
+			
+			//Prepping XSD dateTime/time literals for creating OWL time instants and intervals
+			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, Vocab.xsd + "dateTime");
+			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, Vocab.xsd + "dateTime");
+			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
+			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString, Vocab.xsd + "time");
+			Literal measurementValue = model.createTypedLiteral(values[2].replace(",", "."), Vocab.xsd + "float");
+			Literal unit = model.createLiteral("mg/m^3");
+			
+			//Prepping the instants for the interval creation
+			Resource instantStart = model.createResource();
+			instantStart.addProperty(vocab.inXSDDateTime, xsdDateTimeStart);
+			Resource instantEnd = model.createResource();
+			instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
+			
+			//creating the interval
+			Resource interval = model.createResource(); // the owl time interval in which the measurement is made
+			interval.addProperty(vocab.owlStartTime, instantStart);
+			interval.addProperty(vocab.owlEndTime, instantEnd);
+			
+			//adding final properties to the datapoint
+			data.addProperty(vocab.measuredTimeInterval, interval); //the data has a measuredTimeInterval this interval
+			data.addProperty(vocab.endTime, xsdTimeEnd);
+			data.addProperty(vocab.startTime, xsdTimeStart);
+			data.addProperty(vocab.valueMeasured, measurementValue);
+			data.addProperty(vocab.unitOfMeasurement, unit);
 
 		}
 	} //end addData
