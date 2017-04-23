@@ -75,9 +75,9 @@ public class WeatherDataParser {
 			sensorClass.addProperty(OWL.sameAs, ssn + "Sensor");
 
 			Property inServiceSince = model.createProperty(ns + stHeaders[2]);
-			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
+//			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
 			inServiceSince.addProperty(RDFS.domain, weatherSensorClass);
-			inServiceUntil.addProperty(RDFS.domain, weatherSensorClass);
+//			inServiceUntil.addProperty(RDFS.domain, weatherSensorClass);
 			inServiceSince.addProperty(RDFS.range, XSD.gYearMonth);
 			// Alle feltene for denne verdien er blanke, så lar range være uspesifisert enn så lenge
 //			inServiceUntil.addProperty(RDFS.range, XSD.gYearMonth);
@@ -119,7 +119,7 @@ public class WeatherDataParser {
 				wSensor.addProperty(inServiceSince, yearMonth);
 				
 				//I drift til (evt. skippe dette feltet, da ingen av stasjonene har noe data der)
-				wSensor.addProperty(inServiceUntil, stvalues[3]);
+//				wSensor.addProperty(inServiceUntil, stvalues[3]);
 				
 				//Høyde over havet
 				wSensor.addLiteral(masl, Integer.parseInt(stvalues[4]));
@@ -163,17 +163,19 @@ public class WeatherDataParser {
 		data.addProperty(model.getProperty(ns + "measuredByStation"), model.getResource(ns + values[0]));
 
 		String[] rawDate = values[1].split("-");
-//		System.out.println(rawDate[0]);
-//		System.out.println(rawDate[1]);
 		String xsdDateString = ParseUtils.dmyToXSDate(rawDate[0]);
 		String xsdTimeString = rawDate[1];
 		String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
 		Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, xsd + "dateTime");
 		data.addProperty(properties[1], xsdDateTime);
 		
+		//Leser ikke inn data der verdien for målingen mangler eller er merket som upålitelig
+		//Enkelte measurements blir da stående "blanke", uten mer data enn dato-tid og tilhørende sensor
 		for (int i = 2; i < values.length; i++) {
+			if (!(values[i].equals(" ")) && (!(values[i].equals("x")))) {
 			Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
 			data.addLiteral(properties[i], value);
+			}
 		}
 			
 		
