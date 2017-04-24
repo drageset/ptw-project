@@ -38,7 +38,7 @@ public class TrafficDataParser {
 
 		model.setNsPrefix(Vocab.prefix, Vocab.ns);
 		model.setNsPrefix("ssn", Vocab.ssn);
-		model.setNsPrefix("qb", Vocab.qb);
+		model.setNsPrefix("time", Vocab.time);
 		
 
 		try {
@@ -108,7 +108,7 @@ public class TrafficDataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, vocab.dataSet, sensorResource);
+				addData(line, model, properties, sensorResource);
 			}
 			reader.close();
 
@@ -118,25 +118,41 @@ public class TrafficDataParser {
 	} //end parseData
 
 
-	private static void addData(String line, Model model, Property[] properties, Resource dataSet,
+	private static void addData(String line, Model model, Property[] properties,
 			Resource sensor) {
 		Vocab vocab = Vocab.getInstance();
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, vocab.trafficMeasurementClass);
 		data.addProperty(model.getProperty(Vocab.ns + "measuredBySensor"), sensor);
-		data.addProperty(model.getProperty(Vocab.ns + "belongsToDataSet"), dataSet);
 
 		String[] values = line.split(";");
 		if (values.length == 9) {
+			
 			String xsdDateString = ParseUtils.dmyToXSDate(values[0]);
-			String xsdTimeString = values[1] + ":00";
-			String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
+			String xsdTimeEndString = values[1] + ":00";
+			String xsdDateTimeEndString = xsdDateString + "T" + xsdTimeEndString;
+			String xsdDateTimeStartString = ParseUtils.calculateStartDateTime(xsdDateTimeEndString); 
+			String xsdTimeStartString = ParseUtils.calculateStartTime(values[1] + ":00");
+
 			Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");
-			Literal xsdTime = model.createTypedLiteral(xsdTimeString, Vocab.xsd + "time");
-			Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, Vocab.xsd + "dateTime");
+			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
+			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString + ":00", Vocab.xsd + "time");
+			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, Vocab.xsd + "dateTime");
+			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString + ":00", Vocab.xsd + "dateTime");
+			
+			Resource instantStart = model.createResource();
+			instantStart.addProperty(vocab.inXSDDateTime, xsdDateTimeStart);
+			Resource instantEnd = model.createResource();
+			instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
+			
+			Resource interval = model.createResource();
+			interval.addProperty(vocab.owlStartTime, instantStart);
+			interval.addProperty(vocab.owlEndTime, instantEnd);
+			data.addProperty(vocab.startTime, xsdTimeStart);
+			data.addProperty(vocab.measuredTimeInterval, interval);
+			data.addProperty(vocab.endTime, xsdTimeEnd);
 			data.addProperty(properties[0], xsdDate);
-			data.addProperty(properties[1], xsdTime);
-			data.addProperty(model.getProperty(Vocab.ns + "dateTime"), xsdDateTime);
+			data.addProperty(model.getProperty(Vocab.ns + "dateTime"), xsdDateTimeEnd);
 			data.addProperty(model.getProperty(Vocab.ns + "roadLaneMeasured"),
 					model.getResource(sensor.getURI() + "_" + values[2]));
 			for (int i = 3; i < values.length; i++) {

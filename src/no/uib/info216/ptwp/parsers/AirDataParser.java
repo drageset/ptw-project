@@ -17,7 +17,7 @@ import org.apache.jena.vocabulary.RDFS;
 public class AirDataParser {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {	
-		String filePath = "NO2dataRolland.csv";
+		String filePath = "airdata.csv";
 		String outputFilePath = "semanticAirData";
 		parseToTurtle(filePath, outputFilePath);
 	}
@@ -29,7 +29,6 @@ public class AirDataParser {
 
 		model.setNsPrefix(Vocab.prefix, Vocab.ns);
 		model.setNsPrefix("ssn", Vocab.ssn);
-		model.setNsPrefix("qb", Vocab.qb);
 		model.setNsPrefix("time", Vocab.time);
 
 		try {
@@ -55,11 +54,10 @@ public class AirDataParser {
 			String pollutantMeasured = sensorDetails[1];
 			String unit = sensorDetails[2];
 			
-			Resource dataSet = model.createResource(Vocab.ns + "DataSet");
+			
 			Resource measurementType = model.createResource(Vocab.ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(Vocab.ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-			dataSet.addProperty(OWL.sameAs, Vocab.qb + "DataSet");
 			measurementType.addProperty(OWL.sameAs, Vocab.ssn + "Observation");			
 
 			sensorResource.addProperty(RDFS.label, sensorLabel);
@@ -67,7 +65,7 @@ public class AirDataParser {
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, dataSet, measurementType, sensorResource);
+				addData(line, model, measurementType, sensorResource);
 			}
 			reader.close();
 			//model.write(System.out, "TURTLE");
@@ -78,13 +76,12 @@ public class AirDataParser {
 
 	} //end addFile
 
-	private static void addData(String line, Model model, Resource dataSet, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Resource measurementType, Resource sensor) {
 		Vocab vocab = Vocab.getInstance();
 		
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		data.addProperty(vocab.measuredBySensor, sensor);
-		data.addProperty(vocab.belongsToDataSet, dataSet);
 
 		String[] values = line.split(";");
 		if(values.length == 3){
@@ -93,7 +90,7 @@ public class AirDataParser {
 			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
 			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
 			String xsdTimeEndString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
-			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
+			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[0]);
 			
 			//Prepping XSD dateTime/time literals for creating OWL time instants and intervals
 			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, Vocab.xsd + "dateTime");

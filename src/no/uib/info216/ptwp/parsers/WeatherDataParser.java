@@ -68,7 +68,6 @@ public class WeatherDataParser {
 			
 			String[] stHeaders = reader.readLine().split(";");
 			
-			Resource dataSet = model.createResource(ns + "DataSet");
 			Resource sensorClass = model.createResource( ns + "Sensor" );
 			Resource weatherSensorClass = model.createResource( ns + "WeatherSensor" );
 			weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
@@ -146,7 +145,7 @@ public class WeatherDataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, dataSet, weatherMeasurementClass);
+				addData(line, model, properties, weatherMeasurementClass);
 			}
 			reader.close();
 		} catch (Exception e) {
@@ -155,7 +154,7 @@ public class WeatherDataParser {
 	} //end parseData
 
 	
-	private static void addData(String line, Model model, Property[] properties, Resource Dataset, Resource measurementType) {
+	private static void addData(String line, Model model, Property[] properties, Resource measurementType) {
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		String[] values = line.split(";");

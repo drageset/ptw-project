@@ -19,9 +19,9 @@ public class Vocab {
 	public final static String ns = "http://www.ptwproject.org/ontology#";
 	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
 	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
-	public final static String qb = "http://purl.org/linked-data/cube#";
 	public final static String time = "http://www.w3.org/2006/time#";
 	public final static String cc = "http://creativecommons.org/ns#";
+	public final static String prov = "http://www.w3.org/ns/prov#";
 	
 	
 	/* PTWP properties */
@@ -31,13 +31,11 @@ public class Vocab {
 	Property endTime; // = model.createProperty(ns + "endTime");
 	Property startTime; // = model.createProperty(ns + "startTime");
 	Property valueMeasured; // = model.createProperty(ns + "valueMeasured");
-	Property belongsToDataSet; // relation between a datapoint and a dataset
 	Property dateTime; // relation between something and it's designated dateTime
 	Property measuresRoadLane; // relationship between a traffic sensor and the road lane it measures
 	Property roadLaneDirection; // relation between a road lane and it's direction
 	
 	/* PTWP classes */
-	Resource dataSet; // class of data sets
 	Resource sensorClass;
 	Resource trafficSensorClass;
 	Resource measurementClass;
@@ -57,10 +55,10 @@ public class Vocab {
 		/* PREFIXES */
 		model.setNsPrefix(Vocab.prefix, ns);
 		model.setNsPrefix("ssn", ssn);
-		model.setNsPrefix("qb", qb);
 		model.setNsPrefix("time", time);
 		model.setNsPrefix("cc", cc);
 		model.setNsPrefix("xsd", xsd);
+		model.setNsPrefix("prov", prov);
 		
 		/* PTWP classes */
 		//sensors
@@ -76,11 +74,6 @@ public class Vocab {
 		//thingies
 		feltClass = model.createResource(Vocab.ns + "RoadLane");
 		
-		dataSet = model.createResource(Vocab.ns + "DataSet");
-		dataSet.addProperty(OWL.sameAs, Vocab.qb + "DataSet");
-
-
-		
 		/* PTWP properties */
 		unitOfMeasurement = model.createProperty(ns + "unitOfMeasurement"); //A measurement has a unit of measurement
 		measuredBySensor = model.createProperty(ns + "measuredBySensor"); // each measurement is measured by a sensor
@@ -88,8 +81,6 @@ public class Vocab {
 		endTime = model.createProperty(ns + "endTime");
 		startTime = model.createProperty(ns + "startTime");
 		valueMeasured = model.createProperty(ns + "valueMeasured");
-		belongsToDataSet = model.createProperty(ns + "belongsToDataSet");
-		belongsToDataSet.addProperty(OWL.sameAs, qb + "dataSet");
 		dateTime = model.createProperty(Vocab.ns + "dateTime");
 		dateTime.addProperty(RDFS.range, XSD.dateTime);
 		
