@@ -58,14 +58,14 @@ public class AirDataParser {
 			Resource measurementType = model.createResource(Vocab.ns + pollutantMeasured + "Measurement");
 			Resource sensorResource = model.createResource(Vocab.ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-			measurementType.addProperty(OWL.sameAs, Vocab.ssn + "Observation");			
+			measurementType.addProperty(OWL.equivalentClass, Vocab.ssn + "Observation");			
 
 			sensorResource.addProperty(RDFS.label, sensorLabel);
 			sensorResource.addProperty(vocab.unitOfMeasurement, unit);
 			
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, measurementType, sensorResource);
+				addData(line, model, measurementType, sensorResource, unit);
 			}
 			reader.close();
 			//model.write(System.out, "TURTLE");
@@ -76,7 +76,7 @@ public class AirDataParser {
 
 	} //end addFile
 
-	private static void addData(String line, Model model, Resource measurementType, Resource sensor) {
+	private static void addData(String line, Model model, Resource measurementType, Resource sensor, String unit) {
 		Vocab vocab = Vocab.getInstance();
 		
 		Resource data = model.createResource();
@@ -98,7 +98,7 @@ public class AirDataParser {
 			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
 			Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString, Vocab.xsd + "time");
 			Literal measurementValue = model.createTypedLiteral(values[2].replace(",", "."), Vocab.xsd + "float");
-			Literal unit = model.createLiteral("mg/m^3");
+			Literal unitLit = model.createLiteral(unit);
 			
 			//Prepping the instants for the interval creation
 			Resource instantStart = model.createResource();
@@ -116,7 +116,7 @@ public class AirDataParser {
 			data.addProperty(vocab.endTime, xsdTimeEnd);
 			data.addProperty(vocab.startTime, xsdTimeStart);
 			data.addProperty(vocab.valueMeasured, measurementValue);
-			data.addProperty(vocab.unitOfMeasurement, unit);
+			data.addProperty(vocab.unitOfMeasurement, unitLit);
 
 		}
 	} //end addData
