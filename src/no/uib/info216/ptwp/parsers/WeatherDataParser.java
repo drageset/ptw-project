@@ -110,6 +110,7 @@ public class WeatherDataParser {
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
 				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i].toLowerCase());
+				//FIKS SÅNN AT RANGE FOR RELEVATNE PROPERTIES ER XSD.FLOAT OG IKKE INTEGER
 				if(i > 1){
 					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
 				}
@@ -148,7 +149,7 @@ public class WeatherDataParser {
 			Literal value = model.createTypedLiteral(values[i], Vocab.xsd + "nonNegativeInteger");
 			data.addLiteral(properties[i], value);
 			}
-		}
+		}// Something fucky gjør at ingen målinger får med seg data om snødybde...
 			
 		
 	} //end addData
