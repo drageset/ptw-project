@@ -39,6 +39,7 @@ public class Vocab {
 	Property inPrincipality; // sensor is located in "kommune"
 	Property inCounty; // sensor is located in "fylke"
 	Property inRegion; // sensor is located in region
+	Property date; // = model.createProperty(ns + "date");
 	
 	/* PTWP classes */
 	Resource sensorClass;
@@ -97,6 +98,7 @@ public class Vocab {
 		valueMeasured = model.createProperty(ns + "valueMeasured");
 		dateTime = model.createProperty(Vocab.ns + "dateTime");
 		dateTime.addProperty(RDFS.range, XSD.dateTime);
+		date = model.createProperty(ns + "date");
 		
 		measuresRoadLane = model.createProperty(Vocab.ns + "measuresRoadLane");
 		measuresRoadLane.addProperty(RDFS.domain, trafficSensorClass);

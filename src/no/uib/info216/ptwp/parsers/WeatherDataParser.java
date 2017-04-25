@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Literal;
@@ -12,7 +11,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
@@ -146,7 +144,7 @@ public class WeatherDataParser {
 		Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
 		Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString + ":00", Vocab.xsd + "time");
 		Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString + ":00", Vocab.xsd + "dateTime");
-		Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, Vocab.xsd + "dateTime");
+		Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString + ":00", Vocab.xsd + "dateTime");
 		
 		Resource instantStart = model.createResource();
 		instantStart.addProperty(vocab.inXSDDateTime, xsdDateTimeStart);
@@ -157,6 +155,7 @@ public class WeatherDataParser {
 		interval.addProperty(vocab.owlStartTime, instantStart);
 		interval.addProperty(vocab.owlEndTime, instantEnd);
 		
+		data.addProperty(vocab.date, xsdDate);
 		data.addProperty(vocab.startTime, xsdTimeStart);
 		data.addProperty(vocab.measuredTimeInterval, interval);
 		data.addProperty(vocab.endTime, xsdTimeEnd);

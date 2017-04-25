@@ -43,11 +43,11 @@ public class ParseUtils {
 	 */
 
 	protected static String calculateStartTime(String datetime) {
-		DateTimeFormatter inFormat = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
-		LocalTime xsdDateTime = LocalTime.parse(datetime, inFormat);
+		DateTimeFormatter xsdFormat = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
+		LocalTime xsdDateTime = LocalTime.parse(datetime, xsdFormat);
 		return xsdDateTime.minusHours(1).toString();
 	}
-	
+
 	/**
 	 * Regner ut starttidspunkt fra slutttidspunkt ved å trekke fra en time
 	 * 
@@ -58,8 +58,8 @@ public class ParseUtils {
 	 */
 
 	protected static String calculateStartDateTime(String datetime) {
-		DateTimeFormatter inFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
-		LocalDateTime xsdDateTime = LocalDateTime.parse(datetime, inFormat);
+		DateTimeFormatter xsdFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+		LocalDateTime xsdDateTime = LocalDateTime.parse(datetime, xsdFormat);
 		return xsdDateTime.minusHours(1).toString();
 	}
 
@@ -189,6 +189,10 @@ public class ParseUtils {
 		return yyyymm;
 	}
 
+	public static String airPolutionDate_to_XSDate(String string) {
+		return calToXSDate(airPolutionDate_ToCal(string)); 
+	}
+	
 	public static String airPolutionTime_to_XSDateTime(String string) {
 		return calToXSDateTime(airPolutionTime_ToCal(string));
 	}
@@ -199,7 +203,28 @@ public class ParseUtils {
 		String xsdDateTime = xsdFormat.format(time);
 		return xsdDateTime;
 	}
+	
 
+	private static Calendar airPolutionDate_ToCal(String string) {
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+		try {
+			cal.setTime(sdf.parse(string));
+			return cal;
+		} catch (ParseException e) {
+			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+			try {
+				cal.setTime(sdfAlt.parse(string));
+				return cal;
+			} catch (ParseException e1) {
+				System.out.println("Error: failed to recognize date format");
+				e1.printStackTrace();
+			}
+		}
+		return cal;
+	}
+	
 	private static Calendar airPolutionTime_ToCal(String string) {
 		Calendar cal = Calendar.getInstance();
 		cal.clear();
@@ -219,6 +244,12 @@ public class ParseUtils {
 		}
 		return cal;
 	}
+	
+	public static String airPolutionDate_to_XSDDate(String string) {
+
+		return calToXSDate(airPolutionDate_ToCal(string));
+	}
+
 
 	public static String airPolutionTime_to_XSDTime(String string) {
 
@@ -231,5 +262,7 @@ public class ParseUtils {
 		String xsdTime = xsdTimeFormat.format(time);
 		return xsdTime;
 	}
+	
+	
 
 }

@@ -87,12 +87,15 @@ public class AirDataParser {
 		if(values.length == 3){
 			
 			//Prepping strings for creating XSD date time/time literals
+			String[] rawDate = values[0].split(" ");
+			String xsdDateString = ParseUtils.airPolutionDate_to_XSDate(rawDate[0]);
 			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
 			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
 			String xsdTimeEndString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
 			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[0]);
 			
 			//Prepping XSD dateTime/time literals for creating OWL time instants and intervals
+			Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");
 			Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString, Vocab.xsd + "dateTime");
 			Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, Vocab.xsd + "dateTime");
 			Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
@@ -112,6 +115,7 @@ public class AirDataParser {
 			interval.addProperty(vocab.owlEndTime, instantEnd);
 			
 			//adding final properties to the datapoint
+			data.addProperty(vocab.date, xsdDate);
 			data.addProperty(vocab.measuredTimeInterval, interval); //the data has a measuredTimeInterval this interval
 			data.addProperty(vocab.endTime, xsdTimeEnd);
 			data.addProperty(vocab.startTime, xsdTimeStart);
