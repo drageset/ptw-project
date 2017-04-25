@@ -137,10 +137,31 @@ public class WeatherDataParser {
 
 		String[] rawDate = values[1].split("-");
 		String xsdDateString = ParseUtils.dmyToXSDate(rawDate[0]);
-		String xsdTimeString = rawDate[1];
-		String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
-		Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, Vocab.xsd + "dateTime");
-		data.addProperty(properties[1], xsdDateTime);
+		String xsdTimeEndString = rawDate[1];
+		String xsdDateTimeEndString = xsdDateString + "T" + xsdTimeEndString;
+		String xsdTimeStartString = ParseUtils.calculateStartTime(xsdTimeEndString + ":00");
+		String xsdDateTimeStartString = ParseUtils.calculateStartDateTime(xsdDateTimeEndString + ":00");
+		
+		Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");
+		Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
+		Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString + ":00", Vocab.xsd + "time");
+		Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString + ":00", Vocab.xsd + "dateTime");
+		Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString, Vocab.xsd + "dateTime");
+		
+		Resource instantStart = model.createResource();
+		instantStart.addProperty(vocab.inXSDDateTime, xsdDateTimeStart);
+		Resource instantEnd = model.createResource();
+		instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
+		
+		Resource interval = model.createResource();
+		interval.addProperty(vocab.owlStartTime, instantStart);
+		interval.addProperty(vocab.owlEndTime, instantEnd);
+		
+		data.addProperty(vocab.startTime, xsdTimeStart);
+		data.addProperty(vocab.measuredTimeInterval, interval);
+		data.addProperty(vocab.endTime, xsdTimeEnd);
+		
+		data.addProperty(properties[1], xsdDateTimeEnd);
 		
 		//Leser ikke inn data der verdien for målingen mangler eller er merket som upålitelig
 		//Enkelte measurements blir da stående "blanke", uten mer data enn dato-tid og tilhørende sensor
