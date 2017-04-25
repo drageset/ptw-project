@@ -18,11 +18,6 @@ import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 
 public class WeatherDataParser {
-	public final static String prefix = "ptw";
-	public final static String ns = "http://www.ptwproject.org/ontology#";
-	public final static String xsd = "http://www.w3.org/2001/XMLSchema#";
-	public final static String ssn = "http://purl.oclc.org/NET/ssnx/ssn#";
-	public final static String qb = "http://purl.org/linked-data/cube#";
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String filePath = "wdata.csv";
@@ -41,10 +36,10 @@ public class WeatherDataParser {
 		outputFilePath += ".ttl";
 		OntModel model = ModelFactory.createOntologyModel();
 
-		model.setNsPrefix(prefix, ns);
-		model.setNsPrefix("ssn", ssn);
-		model.setNsPrefix("qb", qb);
-		
+		model.setNsPrefix(Vocab.prefix, Vocab.ns);
+		model.setNsPrefix("ssn", Vocab.ssn);	
+		model.setNsPrefix("time", Vocab.time);
+
 
 		try {
 			parseData(filePath, model);
@@ -58,6 +53,7 @@ public class WeatherDataParser {
 	private static void parseData (String filePath, OntModel model) throws FileNotFoundException, IOException {
 		File csvFile = new File(filePath);
 		BufferedReader reader;
+		Vocab vocab = Vocab.getInstance();
 		try {
 			reader = new BufferedReader(new FileReader(csvFile));
 			
@@ -68,45 +64,21 @@ public class WeatherDataParser {
 			
 			String[] stHeaders = reader.readLine().split(";");
 			
-			Resource sensorClass = model.createResource( ns + "Sensor" );
-			Resource weatherSensorClass = model.createResource( ns + "WeatherSensor" );
-			weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
-			sensorClass.addProperty(OWL.sameAs, ssn + "Sensor");
-
-			Property inServiceSince = model.createProperty(ns + stHeaders[2]);
+			
 //			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
-			inServiceSince.addProperty(RDFS.domain, weatherSensorClass);
 //			inServiceUntil.addProperty(RDFS.domain, weatherSensorClass);
-			inServiceSince.addProperty(RDFS.range, XSD.gYearMonth);
-			// Alle feltene for denne verdien er blanke, så lar range være uspesifisert enn så lenge
+// Alle feltene for denne verdien er blanke, så lar range være uspesifisert enn så lenge
 //			inServiceUntil.addProperty(RDFS.range, XSD.gYearMonth);
-
-			Resource measurementClass = model.createResource(ns + "Measurement");
-			Resource weatherMeasurementClass = model.createResource(ns + "WeatherMeasurement");
-			weatherMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
-			weatherMeasurementClass.addProperty(OWL.sameAs, ssn + "Observation");	
-
-			Property dateTime = model.createProperty(ns + "dateTime");
-			dateTime.addProperty(RDFS.range, XSD.dateTime);
-
-			Property masl = model.createProperty(ns + stHeaders[4]);
-			masl.addProperty(RDFS.domain, weatherSensorClass);
-			masl.addProperty(RDFS.range, XSD.nonNegativeInteger);
-
-			Property inPrincipality = model.createProperty(ns + stHeaders[5]);
-			Property inCounty = model.createProperty(ns + stHeaders[6]);
-			Property inRegion = model.createProperty(ns + stHeaders[7]);
+			
 
 			// Blokk med data om værstasjonene
 			for (int i = 0; i < 6; i++) {
 				String[] stvalues = reader.readLine().split(";");
 				
-				//Slår sammen stasjonnens navn og nummmer for å lage URI
-				//Sikkert lurt å også legge til nummer og eller navn hver for seg som properties
+				//Nummer som URI, navn som label
 				String stNum = stvalues[0];
 				String stName = stvalues[1];
-//				String stIndividual = (stNum + "_" + stName).replaceAll(" ", "").replaceAll("-", "_");
-				Individual wSensor = model.createIndividual(ns + stNum, weatherSensorClass);
+				Individual wSensor = model.createIndividual(Vocab.ns + stNum, vocab.weatherSensorClass);
 				Literal nameLabel = model.createLiteral(stName);
 				wSensor.addLabel(nameLabel);
 				
@@ -114,19 +86,19 @@ public class WeatherDataParser {
 				String stMonth = stvalues[2].substring(0, 3);
 				String stYear = stvalues[2].substring(4);
 				String stYearMonth = ParseUtils.fixDateFormat(stMonth, stYear);
-				Literal yearMonth = model.createTypedLiteral(stYearMonth, xsd + "gYearMonth");
-				wSensor.addProperty(inServiceSince, yearMonth);
+				Literal yearMonth = model.createTypedLiteral(stYearMonth, Vocab.xsd + "gYearMonth");
+				wSensor.addProperty(vocab.inServiceSince, yearMonth);
 				
 				//I drift til (evt. skippe dette feltet, da ingen av stasjonene har noe data der)
 //				wSensor.addProperty(inServiceUntil, stvalues[3]);
 				
 				//Høyde over havet
-				wSensor.addLiteral(masl, Integer.parseInt(stvalues[4]));
+				wSensor.addLiteral(vocab.masl, Integer.parseInt(stvalues[4]));
 				
 				//Lokasjon
-				wSensor.addProperty(inPrincipality, stvalues[5]);
-				wSensor.addProperty(inCounty, stvalues[6]);
-				wSensor.addProperty(inRegion, stvalues[7]);	
+				wSensor.addProperty(vocab.inPrincipality, stvalues[5]);
+				wSensor.addProperty(vocab.inCounty, stvalues[6]);
+				wSensor.addProperty(vocab.inRegion, stvalues[7]);	
 			}
 
 			//38 linjer med drit
@@ -137,7 +109,7 @@ public class WeatherDataParser {
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
-				properties[i] = model.createProperty(model.getNsPrefixURI(prefix) + headers[i].toLowerCase());
+				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i].toLowerCase());
 				if(i > 1){
 					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
 				}
@@ -145,7 +117,7 @@ public class WeatherDataParser {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				addData(line, model, properties, weatherMeasurementClass);
+				addData(line, model, properties, vocab.weatherMeasurementClass);
 			}
 			reader.close();
 		} catch (Exception e) {
@@ -155,24 +127,25 @@ public class WeatherDataParser {
 
 	
 	private static void addData(String line, Model model, Property[] properties, Resource measurementType) {
+		Vocab vocab = Vocab.getInstance();
 		Resource data = model.createResource();
 		data.addProperty(RDF.type, measurementType);
 		String[] values = line.split(";");
 		//ingen getLiteral()-metode, ser ut som det funker med getResource()
-		data.addProperty(model.getProperty(ns + "measuredByStation"), model.getResource(ns + values[0]));
+		data.addProperty(vocab.measuredBySensor, model.getResource(Vocab.ns + values[0]));
 
 		String[] rawDate = values[1].split("-");
 		String xsdDateString = ParseUtils.dmyToXSDate(rawDate[0]);
 		String xsdTimeString = rawDate[1];
 		String xsdDateTimeString = xsdDateString + "T" + xsdTimeString;
-		Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, xsd + "dateTime");
+		Literal xsdDateTime = model.createTypedLiteral(xsdDateTimeString, Vocab.xsd + "dateTime");
 		data.addProperty(properties[1], xsdDateTime);
 		
 		//Leser ikke inn data der verdien for målingen mangler eller er merket som upålitelig
 		//Enkelte measurements blir da stående "blanke", uten mer data enn dato-tid og tilhørende sensor
 		for (int i = 2; i < values.length; i++) {
 			if (!(values[i].equals(" ")) && (!(values[i].equals("x")))) {
-			Literal value = model.createTypedLiteral(values[i], xsd + "nonNegativeInteger");
+			Literal value = model.createTypedLiteral(values[i], Vocab.xsd + "nonNegativeInteger");
 			data.addLiteral(properties[i], value);
 			}
 		}

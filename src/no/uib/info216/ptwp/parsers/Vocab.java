@@ -34,13 +34,21 @@ public class Vocab {
 	Property dateTime; // relation between something and it's designated dateTime
 	Property measuresRoadLane; // relationship between a traffic sensor and the road lane it measures
 	Property roadLaneDirection; // relation between a road lane and it's direction
+	Property inServiceSince; // sensor has been in service since $time
+	Property masl; // sensor is located x Meters Above Sea Level
+	Property inPrincipality; // sensor is located in "kommune"
+	Property inCounty; // sensor is located in "fylke"
+	Property inRegion; // sensor is located in region
 	
 	/* PTWP classes */
 	Resource sensorClass;
 	Resource trafficSensorClass;
+	Resource weatherSensorClass;
 	Resource measurementClass;
 	Resource trafficMeasurementClass;
+	Resource weatherMeasurementClass;
 	Resource feltClass;
+	
 	
 	/*OWL time props */
 	Property owlStartTime; // = model.createProperty(time + "hasStartTime"); // an Interval has a beginning and end, each of which are Instants
@@ -66,11 +74,17 @@ public class Vocab {
 		sensorClass.addProperty(OWL.sameAs, Vocab.ssn + "Sensor");
 		trafficSensorClass = model.createResource(Vocab.ns + "TrafficSensor");
 		trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
+		weatherSensorClass = model.createResource(Vocab.ns + "WeatherSensor");
+		weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
+
 		//measurements
 		measurementClass = model.createResource(Vocab.ns + "Measurement");
 		measurementClass.addProperty(OWL.sameAs, Vocab.ssn + "Observation");
 		trafficMeasurementClass = model.createResource(Vocab.ns + "TrafficMeasurement");
 		trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+		weatherMeasurementClass = model.createResource(Vocab.ns + "WeatherMeasurement");
+		weatherMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
+		
 		//thingies
 		feltClass = model.createResource(Vocab.ns + "RoadLane");
 		
@@ -88,6 +102,16 @@ public class Vocab {
 		measuresRoadLane.addProperty(RDFS.domain, trafficSensorClass);
 		roadLaneDirection = model.createProperty(Vocab.ns + "roadLaneDirection");
 		roadLaneDirection.addProperty(RDFS.domain, feltClass);
+		
+		inServiceSince = model.createProperty(Vocab.ns + "inServiceSince");
+		inServiceSince.addProperty(RDFS.domain, vocab.weatherSensorClass);
+		inServiceSince.addProperty(RDFS.range, XSD.gYearMonth);
+		masl = model.createProperty(Vocab.ns + "metersAboveSeaLevel");
+		masl.addProperty(RDFS.domain, vocab.weatherSensorClass);
+		masl.addProperty(RDFS.range, XSD.nonNegativeInteger);
+		inPrincipality = model.createProperty(Vocab.ns + "inPrincipality");
+		inCounty = model.createProperty(Vocab.ns + "inCounty");
+		inRegion = model.createProperty(Vocab.ns + "inRegion");
 		
 		/*OWL time props */
 		owlStartTime = model.createProperty(time + "hasStartTime"); // an Interval has a beginning and end, each of which are Instants
