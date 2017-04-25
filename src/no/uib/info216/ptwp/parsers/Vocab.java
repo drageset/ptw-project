@@ -104,10 +104,10 @@ public class Vocab {
 		roadLaneDirection.addProperty(RDFS.domain, feltClass);
 		
 		inServiceSince = model.createProperty(Vocab.ns + "inServiceSince");
-		inServiceSince.addProperty(RDFS.domain, vocab.weatherSensorClass);
+		inServiceSince.addProperty(RDFS.domain, weatherSensorClass);
 		inServiceSince.addProperty(RDFS.range, XSD.gYearMonth);
 		masl = model.createProperty(Vocab.ns + "metersAboveSeaLevel");
-		masl.addProperty(RDFS.domain, vocab.weatherSensorClass);
+		masl.addProperty(RDFS.domain, weatherSensorClass);
 		masl.addProperty(RDFS.range, XSD.nonNegativeInteger);
 		inPrincipality = model.createProperty(Vocab.ns + "inPrincipality");
 		inCounty = model.createProperty(Vocab.ns + "inCounty");
