@@ -22,14 +22,14 @@ public class WeatherDataParser {
 		String outputFilePath = "semanticWData";
 		parseToTurtle(filePath, outputFilePath);
 	}
-	
+
 	/**
 	 * This method parses information from a traffic data CSV file and writes it out in a turtle file
 	 * @param filePath of the original CSV file
 	 * @param outputFilePath including name of the new TURTLE file, not included ".ttl" file ending.
 	 */
 	public static void parseToTurtle(String filePath, String outputFilePath){
-		
+
 		String notation = "TURTLE";
 		outputFilePath += ".ttl";
 		OntModel model = ModelFactory.createOntologyModel();
@@ -54,45 +54,45 @@ public class WeatherDataParser {
 		Vocab vocab = Vocab.getInstance();
 		try {
 			reader = new BufferedReader(new FileReader(csvFile));
-			
+
 			//Tre linjer med drit i toppen
 			reader.readLine();
 			reader.readLine();
 			reader.readLine();
-			
+
 			String[] stHeaders = reader.readLine().split(";");
-			
-			
-//			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
-//			inServiceUntil.addProperty(RDFS.domain, weatherSensorClass);
-// Alle feltene for denne verdien er blanke, så lar range være uspesifisert enn så lenge
-//			inServiceUntil.addProperty(RDFS.range, XSD.gYearMonth);
-			
+
+
+			//			Property inServiceUntil = model.createProperty(ns + stHeaders[3]);
+			//			inServiceUntil.addProperty(RDFS.domain, weatherSensorClass);
+			// Alle feltene for denne verdien er blanke, så lar range være uspesifisert enn så lenge
+			//			inServiceUntil.addProperty(RDFS.range, XSD.gYearMonth);
+
 
 			// Blokk med data om værstasjonene
 			for (int i = 0; i < 6; i++) {
 				String[] stvalues = reader.readLine().split(";");
-				
+
 				//Nummer som URI, navn som label
 				String stNum = stvalues[0];
 				String stName = stvalues[1];
 				Individual wSensor = model.createIndividual(Vocab.ns + stNum, vocab.weatherSensorClass);
 				Literal nameLabel = model.createLiteral(stName);
 				wSensor.addLabel(nameLabel);
-				
+
 				//I drift fra
 				String stMonth = stvalues[2].substring(0, 3);
 				String stYear = stvalues[2].substring(4);
 				String stYearMonth = ParseUtils.fixDateFormat(stMonth, stYear);
 				Literal yearMonth = model.createTypedLiteral(stYearMonth, Vocab.xsd + "gYearMonth");
 				wSensor.addProperty(vocab.inServiceSince, yearMonth);
-				
+
 				//I drift til (evt. skippe dette feltet, da ingen av stasjonene har noe data der)
-//				wSensor.addProperty(inServiceUntil, stvalues[3]);
-				
+				//				wSensor.addProperty(inServiceUntil, stvalues[3]);
+
 				//Høyde over havet
 				wSensor.addLiteral(vocab.masl, Integer.parseInt(stvalues[4]));
-				
+
 				//Lokasjon
 				wSensor.addProperty(vocab.inPrincipality, stvalues[5]);
 				wSensor.addProperty(vocab.inCounty, stvalues[6]);
@@ -108,9 +108,12 @@ public class WeatherDataParser {
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
 				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i].toLowerCase());
-				//FIKS SÅNN AT RANGE FOR RELEVATNE PROPERTIES ER XSD.FLOAT OG IKKE INTEGER
+				//Range for windDirection og wavaCode er nonNegativeInteger, alle andre er float
 				if(i > 1){
-					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
+					if (i == 4 || i == 6) {
+						properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
+					} else
+					properties[i].addProperty(RDFS.range, XSD.xfloat);
 				}
 			}
 
@@ -124,7 +127,7 @@ public class WeatherDataParser {
 		}
 	} //end parseData
 
-	
+
 	private static void addData(String line, Model model, Property[] properties, Resource measurementType) {
 		Vocab vocab = Vocab.getInstance();
 		Resource data = model.createResource();
@@ -139,38 +142,42 @@ public class WeatherDataParser {
 		String xsdDateTimeEndString = xsdDateString + "T" + xsdTimeEndString;
 		String xsdTimeStartString = ParseUtils.calculateStartTime(xsdTimeEndString + ":00");
 		String xsdDateTimeStartString = ParseUtils.calculateStartDateTime(xsdDateTimeEndString + ":00");
-		
+
 		Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");
 		Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
 		Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString + ":00", Vocab.xsd + "time");
 		Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString + ":00", Vocab.xsd + "dateTime");
 		Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString + ":00", Vocab.xsd + "dateTime");
-		
+
 		Resource instantStart = model.createResource();
 		instantStart.addProperty(vocab.inXSDDateTime, xsdDateTimeStart);
 		Resource instantEnd = model.createResource();
 		instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
-		
+
 		Resource interval = model.createResource();
 		interval.addProperty(vocab.owlStartTime, instantStart);
 		interval.addProperty(vocab.owlEndTime, instantEnd);
-		
+
 		data.addProperty(vocab.date, xsdDate);
 		data.addProperty(vocab.startTime, xsdTimeStart);
 		data.addProperty(vocab.measuredTimeInterval, interval);
 		data.addProperty(vocab.endTime, xsdTimeEnd);
-		
+
 		data.addProperty(properties[1], xsdDateTimeEnd);
-		
+
 		//Leser ikke inn data der verdien for målingen mangler eller er merket som upålitelig
 		//Enkelte measurements blir da stående "blanke", uten mer data enn dato-tid og tilhørende sensor
 		for (int i = 2; i < values.length; i++) {
 			if (!(values[i].equals(" ")) && (!(values[i].equals("x")))) {
-			Literal value = model.createTypedLiteral(values[i], Vocab.xsd + "nonNegativeInteger");
-			data.addLiteral(properties[i], value);
+				//Gi verdiene riktig datatype, og sørg for at floats bruker "." og ikke ","
+				if (i == 4 || i ==6) {
+					Literal value = model.createTypedLiteral(values[i], Vocab.xsd + "nonNegativeInteger");
+					data.addLiteral(properties[i], value);
+				} else {
+				Literal value = model.createTypedLiteral(values[i].replace(",", "."), Vocab.xsd + "float");
+				data.addLiteral(properties[i], value);
+				}
 			}
-		}// Something fucky gjør at ingen målinger får med seg data om snødybde...
-			
-		
+		}
 	} //end addData
 }// end class
