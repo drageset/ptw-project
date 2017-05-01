@@ -87,12 +87,16 @@ public class AirDataParser {
 		if(values.length == 3){
 			
 			//Prepping strings for creating XSD date time/time literals
-			String[] rawDate = values[0].split(" ");
-			String xsdDateString = ParseUtils.airPolutionDate_to_XSDate(rawDate[0]);
+			String[] rawDateTimeStart = values[0].split(" ");
+			String[] rawDateTimeEnd = values[1].split(" ");
+			String xsdDateString = ParseUtils.airPolutionDate_to_XSDate( rawDateTimeStart[0] );
+			
 			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
+			String xsdTimeStartString = rawDateTimeStart[1];
+			
 			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
-			String xsdTimeEndString = ParseUtils.airPolutionTime_to_XSDTime(values[1]);
-			String xsdTimeStartString = ParseUtils.airPolutionTime_to_XSDTime(values[0]);
+			String xsdTimeEndString = rawDateTimeEnd[1];
+			
 			
 			//Prepping XSD dateTime/time literals for creating OWL time instants and intervals
 			Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");

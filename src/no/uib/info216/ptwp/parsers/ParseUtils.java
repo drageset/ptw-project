@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Model;
@@ -190,71 +190,90 @@ public class ParseUtils {
 	}
 
 	public static String airPolutionDate_to_XSDate(String string) {
-		return calToXSDate(airPolutionDate_ToCal(string)); 
+		//return calToXSDate(airPolutionDate_ToCal(string)); 
+		String[] dateTime = string.split(" ");
+		String[] date = dateTime[0].split("\\.");
+		
+		if(date[0].length() < 4){ //test if the year comes first. If it does not, switch it to the right place.
+			String temp = date[2];
+			date[2] = date[0];
+			date[0] = temp;
+		}
+		String xsddate = date[0]+ "-" + date [1] + "-" + date[2];
+		return xsddate;
 	}
 	
 	public static String airPolutionTime_to_XSDateTime(String string) {
-		return calToXSDateTime(airPolutionTime_ToCal(string));
-	}
-
-	private static String calToXSDateTime(Calendar cal) {
-		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
-		Date time = cal.getTime();
-		String xsdDateTime = xsdFormat.format(time);
-		return xsdDateTime;
-	}
-	
-
-	private static Calendar airPolutionDate_ToCal(String string) {
-		Calendar cal = Calendar.getInstance();
-		cal.clear();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
-		try {
-			cal.setTime(sdf.parse(string));
-			return cal;
-		} catch (ParseException e) {
-			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
-			try {
-				cal.setTime(sdfAlt.parse(string));
-				return cal;
-			} catch (ParseException e1) {
-				System.out.println("Error: failed to recognize date format");
-				e1.printStackTrace();
-			}
+		//return calToXSDateTime(airPolutionTime_ToCal(string));
+		String[] array = string.replace(" ", ".").split("\\.");
+		
+		if(array[0].length() < 4){ //test if the year comes first. If it does not, switch it to the right place.
+			String temp = array[2];
+			array[2] = array[0];
+			array[0] = temp;
 		}
-		return cal;
+		String xsddate = array[0]+ "-" + array [1] + "-" + array[2] + "T" + array[3];
+		return xsddate;
 	}
+
+//	private static String calToXSDateTime(Calendar cal) {
+//		SimpleDateFormat xsdFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+//		Date time = cal.getTime();
+//		String xsdDateTime = xsdFormat.format(time);
+//		return xsdDateTime;
+//	}
+//	
+
+//	private static Calendar airPolutionDate_ToCal(String string) {
+//		Calendar cal = Calendar.getInstance();
+//		cal.clear();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+//		try {
+//			cal.setTime(sdf.parse(string));
+//			return cal;
+//		} catch (ParseException e) {
+//			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+//			try {
+//				cal.setTime(sdfAlt.parse(string));
+//				return cal;
+//			} catch (ParseException e1) {
+//				System.out.println("Error: failed to recognize date format");
+//				e1.printStackTrace();
+//			}
+//		}
+//		return cal;
+//	}
 	
-	private static Calendar airPolutionTime_ToCal(String string) {
-		Calendar cal = Calendar.getInstance();
-		cal.clear();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.ENGLISH);
-		try {
-			cal.setTime(sdf.parse(string));
-			return cal;
-		} catch (ParseException e) {
-			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH);
-			try {
-				cal.setTime(sdfAlt.parse(string));
-				return cal;
-			} catch (ParseException e1) {
-				System.out.println("Error: failed to recognize date time format");
-				e1.printStackTrace();
-			}
-		}
-		return cal;
-	}
+//	private static Calendar airPolutionTime_ToCal(String string) {
+//		Calendar cal = Calendar.getInstance();
+//		cal.clear();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.ENGLISH);
+//		try {
+//			cal.setTime(sdf.parse(string));
+//			return cal;
+//		} catch (ParseException e) {
+//			SimpleDateFormat sdfAlt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH);
+//			try {
+//				cal.setTime(sdfAlt.parse(string));
+//				return cal;
+//			} catch (ParseException e1) {
+//				System.out.println("Error: failed to recognize date time format");
+//				e1.printStackTrace();
+//			}
+//		}
+//		return cal;
+//	}
 	
-	public static String airPolutionDate_to_XSDDate(String string) {
+//	public static String airPolutionDate_to_XSDDate(String string) {
+//
+//		return calToXSDate(airPolutionDate_ToCal(string));
+//	}
 
-		return calToXSDate(airPolutionDate_ToCal(string));
-	}
 
-
-	public static String airPolutionTime_to_XSDTime(String string) {
-
-		return calToXSDtime(airPolutionTime_ToCal(string));
-	}
+//	public static String airPolutionTime_to_XSDTime(String string) {
+//
+//		return calToXSDtime(airPolutionTime_ToCal(string));
+//	}
 
 	private static String calToXSDtime(Calendar cal) {
 		SimpleDateFormat xsdTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
