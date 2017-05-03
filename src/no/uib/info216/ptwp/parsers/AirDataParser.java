@@ -91,11 +91,11 @@ public class AirDataParser {
 			String[] rawDateTimeEnd = values[1].split(" ");
 			String xsdDateString = ParseUtils.airPolutionDate_to_XSDate( rawDateTimeStart[0] );
 			
-			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] );
-			String xsdTimeStartString = rawDateTimeStart[1];
+			String xsdDateTimeStartString = ParseUtils.airPolutionTime_to_XSDateTime( values[0] ) + ":00";
+			String xsdTimeStartString = rawDateTimeStart[1] + ":00";
 			
-			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] );
-			String xsdTimeEndString = rawDateTimeEnd[1];
+			String xsdDateTimeEndString = ParseUtils.airPolutionTime_to_XSDateTime( values[1] ) + ":00";
+			String xsdTimeEndString = rawDateTimeEnd[1] + ":00";
 			
 			
 			//Prepping XSD dateTime/time literals for creating OWL time instants and intervals

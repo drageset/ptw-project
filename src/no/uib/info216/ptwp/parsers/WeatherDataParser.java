@@ -144,7 +144,7 @@ public class WeatherDataParser {
 		String xsdDateTimeStartString = ParseUtils.calculateStartDateTime(xsdDateTimeEndString + ":00");
 
 		Literal xsdDate = model.createTypedLiteral(xsdDateString, Vocab.xsd + "date");
-		Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString, Vocab.xsd + "time");
+		Literal xsdTimeEnd = model.createTypedLiteral(xsdTimeEndString + ":00", Vocab.xsd + "time");
 		Literal xsdTimeStart = model.createTypedLiteral(xsdTimeStartString + ":00", Vocab.xsd + "time");
 		Literal xsdDateTimeStart = model.createTypedLiteral(xsdDateTimeStartString + ":00", Vocab.xsd + "dateTime");
 		Literal xsdDateTimeEnd = model.createTypedLiteral(xsdDateTimeEndString + ":00", Vocab.xsd + "dateTime");
