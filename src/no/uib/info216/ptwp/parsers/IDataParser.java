@@ -14,6 +14,8 @@ interface IDataParser {
 	 * The method then parses the data from the CSV file into the ontology model.
 	 * @param filePath is the filepath of the csv file
 	 * @param model is the ontology model to which the data should be written
+	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
 	public void parseData(String filePath, OntModel model) throws FileNotFoundException, IOException;
 	

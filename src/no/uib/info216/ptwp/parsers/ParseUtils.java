@@ -65,10 +65,8 @@ public class ParseUtils {
 
 	/**
 	 * Gjør dato på formatet xsd:datetime om til et objekt av typen XSDDateTime
-	 * 
-	 * @param xsd:dateTime
-	 *            string
-	 * @return XSDDateTime objekt
+	 * @param xsdString
+	 * @return XSDDateTime
 	 */
 	protected static XSDDateTime toXSDateTime(String xsdString) {
 		Calendar cal;
@@ -85,10 +83,8 @@ public class ParseUtils {
 
 	/**
 	 * Gjør dato på formatet dd.mm.yyyy (dmy) om til Calendar
-	 * 
 	 * @param dmy
-	 *            string
-	 * @return Date
+	 * @return Calendar
 	 * @throws ParseException
 	 */
 	protected static Calendar dmyToCal(String dmy) throws ParseException {
