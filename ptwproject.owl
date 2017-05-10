@@ -1,0 +1,277 @@
+@prefix : <http://www.PTWproject.org/2017/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://www.PTWproject.org/2017/ontology#> a owl:Ontology .
+# 
+# 
+# #################################################################
+# #
+# #    Object Properties
+# #
+# #################################################################
+# 
+# 
+# http://www.PTWproject.org/2017/ontology#measuredBySensor
+
+:measuredBySensor a owl:ObjectProperty ;
+	rdfs:subPropertyOf owl:topObjectProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range :Sensor .
+# 
+# http://www.PTWproject.org/2017/ontology#measuresRoadLane
+
+:measuresRoadLane a owl:ObjectProperty ;
+	rdfs:domain :TrafficSensor ;
+	rdfs:range :RoadLane .
+# 
+# http://www.PTWproject.org/2017/ontology#phenomenaMeasured
+
+:phenomenaMeasured a owl:ObjectProperty .
+# 
+# http://www.PTWproject.org/2017/ontology#roadLane
+
+:roadLane a owl:ObjectProperty ;
+	rdfs:domain :NumberOfVehiclesPassedMeasurement ;
+	rdfs:range :RoadLane .
+# 
+# http://www.PTWproject.org/2017/ontology#unitOfMeasurement
+
+:unitOfMeasurement a owl:ObjectProperty .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Data properties
+# #
+# #################################################################
+# 
+# 
+# http://www.PTWproject.org/2017/ontology#contentMeasurementValue
+
+:contentMeasurementValue a owl:DatatypeProperty .
+# 
+# http://www.PTWproject.org/2017/ontology#contentMicroGramPerCubeMeterNO2
+
+:contentMicroGramPerCubeMeterNO2 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :contentMeasurementValue ;
+	a owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:double .
+# 
+# http://www.PTWproject.org/2017/ontology#contentMicroGramPerCubeMeterO3
+
+:contentMicroGramPerCubeMeterO3 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :contentMeasurementValue ;
+	a owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:double .
+# 
+# http://www.PTWproject.org/2017/ontology#contentMicroGramPerCubeMeterPM10
+
+:contentMicroGramPerCubeMeterPM10 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :contentMeasurementValue ;
+	a owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:double .
+# 
+# http://www.PTWproject.org/2017/ontology#contentMicroGramPerCubeMeterPM2.5
+
+:contentMicroGramPerCubeMeterPM2.5 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :contentMeasurementValue ;
+	a owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:double .
+# 
+# http://www.PTWproject.org/2017/ontology#date
+
+:date a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#endDate
+
+:endDate a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#endDateTime
+
+:endDateTime a owl:DatatypeProperty , owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:dateTime .
+# 
+# http://www.PTWproject.org/2017/ontology#endTime
+
+:endTime a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehicles
+
+:numOfVehicles a owl:DatatypeProperty ;
+	rdfs:domain :TrafficMeasurement ;
+	rdfs:range xsd:int .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehiclesClass1
+
+:numOfVehiclesClass1 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehiclesClass2
+
+:numOfVehiclesClass2 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehiclesClass3
+
+:numOfVehiclesClass3 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehiclesClass4
+
+:numOfVehiclesClass4 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
+# 
+# http://www.PTWproject.org/2017/ontology#numOfVehiclesClass5
+
+:numOfVehiclesClass5 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
+# 
+# http://www.PTWproject.org/2017/ontology#roadLaneDirection
+
+:roadLaneDirection a owl:DatatypeProperty ;
+	rdfs:domain :RoadLane ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#sensorDescription
+
+:sensorDescription a owl:DatatypeProperty ;
+	rdfs:domain :TrafficSensor ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#sensorName
+
+:sensorName a owl:DatatypeProperty ;
+	rdfs:domain :TrafficSensor ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#startDate
+
+:startDate a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#startDateTime
+
+:startDateTime a owl:DatatypeProperty , owl:FunctionalProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:dateTime .
+# 
+# http://www.PTWproject.org/2017/ontology#startTime
+
+:startTime a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# http://www.PTWproject.org/2017/ontology#time
+
+:time a owl:DatatypeProperty ;
+	rdfs:domain :Measurement ;
+	rdfs:range xsd:string .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Classes
+# #
+# #################################################################
+# 
+# 
+# http://www.PTWproject.org/2017/ontology#AirPollutantPerCubeMeterMeasurement
+
+:AirPollutantPerCubeMeterMeasurement a owl:Class ;
+	rdfs:subClassOf :PollutionMeasurement .
+# 
+# http://www.PTWproject.org/2017/ontology#AirPollutionSensor
+
+:AirPollutionSensor a owl:Class ;
+	rdfs:subClassOf :PollutionSensor .
+# 
+# http://www.PTWproject.org/2017/ontology#Measurement
+
+:Measurement a owl:Class .
+# 
+# http://www.PTWproject.org/2017/ontology#NumberOfVehiclesPassedMeasurement
+
+:NumberOfVehiclesPassedMeasurement a owl:Class ;
+	rdfs:subClassOf :TrafficMeasurement .
+# 
+# http://www.PTWproject.org/2017/ontology#PercipitationMeasurement
+
+:PercipitationMeasurement a owl:Class ;
+	rdfs:subClassOf :WeatherMeasurement .
+# 
+# http://www.PTWproject.org/2017/ontology#PollutionMeasurement
+
+:PollutionMeasurement a owl:Class ;
+	rdfs:subClassOf :Measurement .
+# 
+# http://www.PTWproject.org/2017/ontology#PollutionSensor
+
+:PollutionSensor a owl:Class ;
+	rdfs:subClassOf :Sensor .
+# 
+# http://www.PTWproject.org/2017/ontology#PressureMeasurement
+
+:PressureMeasurement a owl:Class ;
+	rdfs:subClassOf :WeatherMeasurement .
+# 
+# http://www.PTWproject.org/2017/ontology#RoadLane
+
+:RoadLane a owl:Class .
+# 
+# http://www.PTWproject.org/2017/ontology#Sensor
+
+:Sensor a owl:Class .
+# 
+# http://www.PTWproject.org/2017/ontology#TemperatureMeasurement
+
+:TemperatureMeasurement a owl:Class ;
+	rdfs:subClassOf :WeatherMeasurement .
+# 
+# http://www.PTWproject.org/2017/ontology#TrafficMeasurement
+
+:TrafficMeasurement a owl:Class ;
+	rdfs:subClassOf :Measurement .
+# 
+# http://www.PTWproject.org/2017/ontology#TrafficSensor
+
+:TrafficSensor a owl:Class ;
+	rdfs:subClassOf :Sensor .
+# 
+# http://www.PTWproject.org/2017/ontology#UnitOfMeasurement
+
+:UnitOfMeasurement a owl:Class .
+# 
+# http://www.PTWproject.org/2017/ontology#WeatherMeasurement
+
+:WeatherMeasurement a owl:Class ;
+	rdfs:subClassOf :Measurement .
+# 
+# http://www.PTWproject.org/2017/ontology#WeatherSensor
+
+:WeatherSensor a owl:Class ;
+	rdfs:subClassOf :Sensor .
+# 
+# http://www.PTWproject.org/2017/ontology#WindMeasurement
+
+:WindMeasurement a owl:Class ;
+	rdfs:subClassOf :WeatherMeasurement .
+# 
+# Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi

@@ -1,0 +1,41 @@
+@prefix cc:    <http://creativecommons.org/ns#> .
+@prefix ptw:   <http://www.ptwproject.org/ontology#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time:  <http://www.w3.org/2006/time#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix ssn:   <http://purl.oclc.org/NET/ssnx/ssn#> .
+
+ptw:TrafficMeasurement
+        rdfs:subClassOf  ptw:Measurement .
+
+ptw:Measurement  owl:sameAs  ssn:Observation .
+
+ptw:AirSensor  rdfs:subClassOf  ptw:Sensor .
+
+ptw:WeatherMeasurement
+        rdfs:subClassOf  ptw:Measurement .
+
+ptw:Sensor  owl:sameAs  ssn:Sensor .
+
+ptw:dateTime  rdfs:range  xsd:dateTime .
+
+ptw:roadLaneDirection
+        rdfs:domain  ptw:RoadLane .
+
+ptw:AirMeasurement  rdfs:subClassOf  ptw:Measurement .
+
+ptw:metersAboveSeaLevel
+        rdfs:domain  ptw:WeatherSensor ;
+        rdfs:range   xsd:nonNegativeInteger .
+
+ptw:TrafficSensor  rdfs:subClassOf  ptw:Sensor .
+
+ptw:WeatherSensor  rdfs:subClassOf  ptw:Sensor .
+
+ptw:measuresRoadLane  rdfs:domain  ptw:TrafficSensor .
+
+ptw:inServiceSince  rdfs:domain  ptw:WeatherSensor ;
+        rdfs:range   xsd:gYearMonth .
