@@ -117,8 +117,8 @@ public class AirDataParser {
 			
 			//creating the interval
 			Resource interval = model.createResource(); // the owl time interval in which the measurement is made
-			interval.addProperty(vocab.owlStartTime, instantStart);
-			interval.addProperty(vocab.owlEndTime, instantEnd);
+			interval.addProperty(vocab.owlBeginning, instantStart);
+			interval.addProperty(vocab.owlEnd, instantEnd);
 			
 			//adding final properties to the datapoint
 			data.addProperty(vocab.date, xsdDate);

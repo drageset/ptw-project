@@ -57,8 +57,8 @@ public class Vocab {
 	Resource ssnSensor;
 	
 	/*OWL time props */
-	Property owlStartTime; // = model.createProperty(time + "hasStartTime"); // an Interval has a beginning and end, each of which are Instants
-	Property owlEndTime; // = model.createProperty(time + "hasEndTime");
+	Property owlBeginning; // = model.createProperty(time + "hasBeginning"); // an Interval has a beginning and end, each of which are Instants
+	Property owlEnd; // = model.createProperty(time + "hasEnd");
 	Property inXSDDateTime; // = model.createProperty(time + "inXSDDateTime"); // an Instant can have an XSDDateTime
 	
 	
@@ -130,8 +130,8 @@ public class Vocab {
 		inRegion = model.createProperty(Vocab.ns + "inRegion");
 		
 		/*OWL time props */
-		owlStartTime = model.createProperty(time + "hasStartTime"); // an Interval has a beginning and end, each of which are Instants
-		owlEndTime = model.createProperty(time + "hasEndTime");
+		owlBeginning = model.createProperty(time + "hasBeginning"); // an Interval has a beginning and end, each of which are Instants
+		owlEnd = model.createProperty(time + "hasEnd");
 		inXSDDateTime = model.createProperty(time + "inXSDDateTime"); // an Instant can have an XSDDateTime
 	}
 	

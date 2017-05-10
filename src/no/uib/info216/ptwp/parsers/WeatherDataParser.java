@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Literal;
@@ -155,8 +156,8 @@ public class WeatherDataParser {
 		instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
 
 		Resource interval = model.createResource();
-		interval.addProperty(vocab.owlStartTime, instantStart);
-		interval.addProperty(vocab.owlEndTime, instantEnd);
+		interval.addProperty(vocab.owlBeginning, instantStart);
+		interval.addProperty(vocab.owlEnd, instantEnd);
 
 		data.addProperty(vocab.date, xsdDate);
 		data.addProperty(vocab.startTime, xsdTimeStart);

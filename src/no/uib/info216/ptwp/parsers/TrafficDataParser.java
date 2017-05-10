@@ -146,8 +146,8 @@ public class TrafficDataParser {
 			instantEnd.addProperty(vocab.inXSDDateTime, xsdDateTimeEnd);
 			
 			Resource interval = model.createResource();
-			interval.addProperty(vocab.owlStartTime, instantStart);
-			interval.addProperty(vocab.owlEndTime, instantEnd);
+			interval.addProperty(vocab.owlBeginning, instantStart);
+			interval.addProperty(vocab.owlEnd, instantEnd);
 			data.addProperty(vocab.startTime, xsdTimeStart);
 			data.addProperty(vocab.measuredTimeInterval, interval);
 			data.addProperty(vocab.endTime, xsdTimeEnd);
