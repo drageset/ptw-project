@@ -54,11 +54,13 @@ public class AirDataParser {
 			String pollutantMeasured = sensorDetails[1];
 			String unit = sensorDetails[2];
 			
-			
+			Resource airMeasurement = model.createResource(Vocab.ns + "AirMeasurement");
 			Resource measurementType = model.createResource(Vocab.ns + pollutantMeasured + "Measurement");
+			measurementType.addProperty(RDFS.subClassOf, airMeasurement);
 			Resource sensorResource = model.createResource(Vocab.ns + sensorLocation +"_"+ pollutantMeasured +"_Sensor");
 			
-			measurementType.addProperty(OWL.equivalentClass, Vocab.ssn + "Observation");			
+			Resource observation = model.createResource(Vocab.ssn + "Observation");
+			measurementType.addProperty(OWL.equivalentClass, observation);			
 
 			sensorResource.addProperty(RDFS.label, sensorLabel);
 			sensorResource.addProperty(vocab.unitOfMeasurement, unit);

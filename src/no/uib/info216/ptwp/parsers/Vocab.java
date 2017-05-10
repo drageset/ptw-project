@@ -44,12 +44,17 @@ public class Vocab {
 	/* PTWP classes */
 	Resource sensorClass;
 	Resource trafficSensorClass;
+	Resource airSensorClass;
 	Resource weatherSensorClass;
 	Resource measurementClass;
+	Resource airMeasurementClass;
 	Resource trafficMeasurementClass;
 	Resource weatherMeasurementClass;
 	Resource feltClass;
 	
+	/* Div classes */
+	Resource ssnObservation;
+	Resource ssnSensor;
 	
 	/*OWL time props */
 	Property owlStartTime; // = model.createProperty(time + "hasStartTime"); // an Interval has a beginning and end, each of which are Instants
@@ -69,18 +74,27 @@ public class Vocab {
 		model.setNsPrefix("xsd", xsd);
 		model.setNsPrefix("prov", prov);
 		
+		/* Div classes */
+		ssnObservation = model.createResource(Vocab.ssn + "Observation");
+		ssnSensor = model.createResource(Vocab.ssn + "Sensor");
+		
 		/* PTWP classes */
 		//sensors
 		sensorClass = model.createResource(Vocab.ns + "Sensor");
-		sensorClass.addProperty(OWL.sameAs, Vocab.ssn + "Sensor");
+		sensorClass.addProperty(OWL.sameAs, ssnSensor);
+		airSensorClass = model.createResource(Vocab.ns + "AirSensor");
+		airSensorClass.addProperty(RDFS.subClassOf, sensorClass);
 		trafficSensorClass = model.createResource(Vocab.ns + "TrafficSensor");
 		trafficSensorClass.addProperty(RDFS.subClassOf, sensorClass);
 		weatherSensorClass = model.createResource(Vocab.ns + "WeatherSensor");
 		weatherSensorClass.addProperty(RDFS.subClassOf, sensorClass);
+		
 
 		//measurements
 		measurementClass = model.createResource(Vocab.ns + "Measurement");
-		measurementClass.addProperty(OWL.sameAs, Vocab.ssn + "Observation");
+		measurementClass.addProperty(OWL.sameAs, ssnObservation);
+		airMeasurementClass = model.createResource(Vocab.ns + "AirMeasurement");
+		airMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
 		trafficMeasurementClass = model.createResource(Vocab.ns + "TrafficMeasurement");
 		trafficMeasurementClass.addProperty(RDFS.subClassOf, measurementClass);
 		weatherMeasurementClass = model.createResource(Vocab.ns + "WeatherMeasurement");
@@ -126,6 +140,10 @@ public class Vocab {
 			vocab = new Vocab();
 		}
 		return vocab;
+	}
+	
+	public OntModel getModel(){
+		return model;
 	}
 
 }
