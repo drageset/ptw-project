@@ -108,7 +108,7 @@ public class WeatherDataParser {
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
 			for (int i=0; i<headers.length; i++){
-				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i].toLowerCase());
+				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i]);
 				//Range for windDirection og wavaCode er nonNegativeInteger, alle andre er float
 				if(i > 1){
 					if (i == 4 || i == 6) {

@@ -100,7 +100,7 @@ public class TrafficDataParser {
 			String[] headers = reader.readLine().split(";");
 			Property[] properties = new Property[headers.length];
 			for (int i = 0; i < headers.length; i++) {
-				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i].toLowerCase());
+				properties[i] = model.createProperty(model.getNsPrefixURI(Vocab.prefix) + headers[i]);
 				if (i > 2) {
 					properties[i].addProperty(RDFS.range, XSD.nonNegativeInteger);
 				}

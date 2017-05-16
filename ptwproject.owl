@@ -70,9 +70,9 @@ xsd:time a rdfs:Datatype .
 # #################################################################
 # 
 # 
-# http://www.ptwproject.org/ontology#airtemperaturecelsius
+# http://www.ptwproject.org/ontology#airTemperatureCelsius
 
-:airtemperaturecelsius a owl:DatatypeProperty ;
+:airTemperatureCelsius a owl:DatatypeProperty ;
 	rdfs:domain :WeatherMeasurement ;
 	rdfs:range xsd:float .
 # 
@@ -100,40 +100,40 @@ xsd:time a rdfs:Datatype .
 	rdfs:domain :Measurement ;
 	rdfs:range xsd:time .
 # 
-# http://www.ptwproject.org/ontology#numofvehicles
+# http://www.ptwproject.org/ontology#numOfVehicles
 
-:numofvehicles a owl:DatatypeProperty ;
+:numOfVehicles a owl:DatatypeProperty ;
 	rdfs:domain :TrafficMeasurement ;
 	rdfs:range xsd:int .
 # 
-# http://www.ptwproject.org/ontology#numofvehiclesclass1
+# http://www.ptwproject.org/ontology#numOfVehiclesClass1
 
-:numofvehiclesclass1 a owl:DatatypeProperty ;
-	rdfs:subPropertyOf :numofvehicles .
+:numOfVehiclesClass1 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
 # 
-# http://www.ptwproject.org/ontology#numofvehiclesclass2
+# http://www.ptwproject.org/ontology#numOfVehiclesClass2
 
-:numofvehiclesclass2 a owl:DatatypeProperty ;
-	rdfs:subPropertyOf :numofvehicles .
+:numOfVehiclesClass2 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
 # 
-# http://www.ptwproject.org/ontology#numofvehiclesclass3
+# http://www.ptwproject.org/ontology#numOfVehiclesClass3
 
-:numofvehiclesclass3 a owl:DatatypeProperty ;
-	rdfs:subPropertyOf :numofvehicles .
+:numOfVehiclesClass3 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
 # 
-# http://www.ptwproject.org/ontology#numofvehiclesclass4
+# http://www.ptwproject.org/ontology#numOfVehiclesClass4
 
-:numofvehiclesclass4 a owl:DatatypeProperty ;
-	rdfs:subPropertyOf :numofvehicles .
+:numOfVehiclesClass4 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
 # 
-# http://www.ptwproject.org/ontology#numofvehiclesclass5
+# http://www.ptwproject.org/ontology#numOfVehiclesClass5
 
-:numofvehiclesclass5 a owl:DatatypeProperty ;
-	rdfs:subPropertyOf :numofvehicles .
+:numOfVehiclesClass5 a owl:DatatypeProperty ;
+	rdfs:subPropertyOf :numOfVehicles .
 # 
-# http://www.ptwproject.org/ontology#precipitationinmm
+# http://www.ptwproject.org/ontology#precipitationInMM
 
-:precipitationinmm a owl:DatatypeProperty ;
+:precipitationInMM a owl:DatatypeProperty ;
 	rdfs:domain :WeatherMeasurement ;
 	rdfs:range xsd:float .
 # 
@@ -191,15 +191,15 @@ xsd:time a rdfs:Datatype .
 	rdfs:domain :Measurement ;
 	rdfs:range xsd:float .
 # 
-# http://www.ptwproject.org/ontology#winddirectiondegrees
+# http://www.ptwproject.org/ontology#windDirectionDegrees
 
-:winddirectiondegrees a owl:DatatypeProperty ;
+:windDirectionDegrees a owl:DatatypeProperty ;
 	rdfs:domain :WeatherMeasurement ;
 	rdfs:range xsd:nonNegativeInteger .
 # 
-# http://www.ptwproject.org/ontology#windspeed10maboveground
+# http://www.ptwproject.org/ontology#windSpeed10MAboveGround
 
-:windspeed10maboveground a owl:DatatypeProperty ;
+:windSpeed10MAboveGround a owl:DatatypeProperty ;
 	rdfs:domain :WeatherMeasurement ;
 	rdfs:range xsd:float .
 # 
