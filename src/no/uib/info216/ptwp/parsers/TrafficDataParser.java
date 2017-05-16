@@ -20,8 +20,8 @@ import org.apache.jena.vocabulary.XSD;
 public class TrafficDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "tdata.csv";
-		String outputFilePath = "semanticTrafficData";
+		String filePath = "TrafikkData/tdata9.csv";
+		String outputFilePath = "TrafikkData/semanticTrafficData9";
 		parseToTurtle(filePath, outputFilePath);
 	}
 	
@@ -66,14 +66,14 @@ public class TrafficDataParser {
 			reader = new BufferedReader(new FileReader(csvFile));
 
 			String[] line1 = reader.readLine().split(";");
-			line1[4] = line1[4].replaceAll(" og ", ", ");
-			String[] felt1 = line1[4].substring(5).split(", ");
-			String felt1retning = line1[5];
+			line1[5] = line1[5].replaceAll(" og ", ", ");
+			String[] felt1 = line1[5].substring(5).split(", ");
+			String felt1retning = line1[6];
 
 			String[] line2 = reader.readLine().split(";");
-			line2[4] = line2[4].replaceAll(" og ", ", ");
-			String[] felt2 = line2[4].substring(5).split(", ");
-			String felt2retning = line2[5];
+			line2[5] = line2[5].replaceAll(" og ", ", ");
+			String[] felt2 = line2[5].substring(5).split(", ");
+			String felt2retning = line2[6];
 
 			String[] line3 = reader.readLine().split(";");
 			String tellepunktNavn = line3[0].substring(12);
