@@ -17,8 +17,8 @@ import org.apache.jena.vocabulary.RDFS;
 public class AirDataParser {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {	
-		String filePath = "airdata.csv";
-		String outputFilePath = "semanticAirData";
+		String filePath = "AirCSV/adata.csv";
+		String outputFilePath = "SemanticAirData/semanticAirData";
 		parseToTurtle(filePath, outputFilePath);
 	}
 	

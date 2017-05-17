@@ -20,8 +20,8 @@ import org.apache.jena.vocabulary.XSD;
 public class TrafficDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "TrafikkData/tdata9.csv";
-		String outputFilePath = "TrafikkData/semanticTrafficData9";
+		String filePath = "TrafficCSV/tdata.csv";
+		String outputFilePath = "SemanticTrafficData/semanticTrafficData";
 		parseToTurtle(filePath, outputFilePath);
 	}
 	

@@ -19,8 +19,8 @@ import org.apache.jena.vocabulary.XSD;
 public class WeatherDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "wdata.csv";
-		String outputFilePath = "semanticWData";
+		String filePath = "WeatherCSV/wdataBergen.csv";
+		String outputFilePath = "SemanticWeatherData/semanticWeatherDataBergen";
 		parseToTurtle(filePath, outputFilePath);
 	}
 
