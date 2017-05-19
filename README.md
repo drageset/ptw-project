@@ -4,8 +4,8 @@
 
 The Pollution Traffic Weather Project (visit our homepage and try the service at [http://fuseki.fone.no:3030/landing.html](http://fuseki.fone.no:3030/landing.html)) is an academic non-profit project based on data with open licensing (CC BY 3.0) from The Norwegian Public Roads Administration, The Norwegian Meteorological Institute, and The Norwegian Institute for Air Research. We have used the Apache Jena framework for Java to lift data about weather, air pollution and traffic in Bergen, Norway from CSV/xls tables to RDF graphs. Around these RDF graphs we have created a website and SPARQL endpoint.
 
-## Getting Started
 
+## Getting Started
 
 To get a copy of our dataset up and running you need to download and install the Apache Jena Fuseki server from the [official site](https://jena.apache.org/download/) 
 We used version 2.6.0.
@@ -28,7 +28,6 @@ ptwp_2017-05-19_22-07-41.nq.gz - this is our main dataset. It contains all our d
 *data:PollutionData - 1338946 triples
 *data:WeatherData - 444548 triples
 
-
 inf_ptw_2017-05-19_22-05-43.nq.gz - this is a sample database with inference engine turned on, containing data from only measuring point for each type of data limited to 1 month (May of 2016). In total 149015 triples. Due to the heavy load inference/reasoning creates on the servers, we had to limit this to 1 month only for demonstration purposes.
 
 ### Usage Example
@@ -44,10 +43,10 @@ WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/TrafficData> {
 }
 }LIMIT 100000
 ```
+
 ![sgvizler_example.png](https://bitbucket.org/repo/nqRqLa/images/504347541-sgvizler_example.png)
 
 ### Prerequisites
-
 
 If you want to use this dataset in a live production environment, make sure you have sufficiently powerful hardware. Also, if running in a live environment you should consider using Apache2 as a host for you webpages instead of the built-in webserver in the Fuseki application. Also make sure to have a properly configured .htaccess file to restrict write access to the public, or use the included Apache Shiro configuration file (shiro.ini) if you wish to use Apache Shiro for security.
 
