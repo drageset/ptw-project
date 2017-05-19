@@ -17,6 +17,12 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 
+/**
+ * The TrafficDataParser is used for parsing traffic data from Vegvesenet,
+ * it takes csv files and returns ttl files,
+ * and can take file path as command line args.
+ * An easy way to use it is to edit the filepath and output filepath in the beginning of main.
+ */
 public class TrafficDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {

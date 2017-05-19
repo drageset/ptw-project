@@ -14,6 +14,12 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
+/**
+ * The AirDataParser is used for parsing air pollution data from NILU,
+ * it takes csv files and returns ttl files,
+ * and can take file path as command line args.
+ * An easy way to use it is to edit the filepath and output filepath in the beginning of main.
+ */
 public class AirDataParser {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {	

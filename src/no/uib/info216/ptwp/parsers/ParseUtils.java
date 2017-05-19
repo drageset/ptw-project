@@ -14,6 +14,10 @@ import java.util.Locale;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Model;
 
+/**
+ * This class contains useful methods for the parsers,
+ * and methods we've been using to test along the way
+ */
 public class ParseUtils {
 
 	/**

@@ -8,6 +8,11 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 
+/**
+ * The Vocab class is used for storing prefixes, properties and resources that are used
+ * across several of the parsers.
+ *
+ */
 public class Vocab {
 	
 	private static Vocab vocab = null;
