@@ -45,6 +45,8 @@ WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/TrafficData> {
 }LIMIT 100000
 ```
 
+[INSERT SCREENSHOT HERE]
+
 ### Prerequisites
 
 
