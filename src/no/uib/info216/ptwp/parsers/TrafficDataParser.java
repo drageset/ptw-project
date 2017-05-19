@@ -20,8 +20,17 @@ import org.apache.jena.vocabulary.XSD;
 public class TrafficDataParser {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String filePath = "TrafficCSV/tdata.csv";
-		String outputFilePath = "SemanticTrafficData/semanticTrafficData";
+		String filePath = "TrafficCSV/tdata.csv"; //location for traffic data csv file you wish to parse if filepath is not specified in args[0]
+		String outputFilePath = "SemanticTrafficData/semanticTrafficData"; //default location for ttl output if output filepath is not specified in args[1]
+		if (args.length == 2){
+			filePath = args[0];
+			outputFilePath = args[1];
+		} else if (args.length == 1) {
+			filePath = "TrafficCSV/" + args[0];
+			outputFilePath = "SemanticTrafficData/" + args[0];
+		} else if (args.length > 0){
+			System.out.println("TrafficDataParser takes one or two arguments: Either the filename of the file you want parsed from the TrafficCSV folder( which will be used again for the output in the SemanticTrafficData folder), or the full filepath for input csv AND the full filepath for output ttl");
+		}
 		parseToTurtle(filePath, outputFilePath);
 	}
 	

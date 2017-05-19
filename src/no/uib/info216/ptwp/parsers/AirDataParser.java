@@ -19,6 +19,15 @@ public class AirDataParser {
 	public static void main(String[] args) throws FileNotFoundException, IOException {	
 		String filePath = "AirCSV/adata.csv";
 		String outputFilePath = "SemanticAirData/semanticAirData";
+		if (args.length == 2){
+			filePath = args[0];
+			outputFilePath = args[1];
+		} else if (args.length == 1) {
+			filePath = "AirCSV/" + args[0];
+			outputFilePath = "SemanticAirData/" + args[0];
+		} else if (args.length > 0){
+			System.out.println("WeatherDataParser takes one or two arguments: Either the filename of the file you want parsed from the AirCSV folder ( which will be used again for the output in the SemanticAirData folder), or the full filepath for input csv AND the full filepath for output ttl");
+		}
 		parseToTurtle(filePath, outputFilePath);
 	}
 	
