@@ -11,3 +11,5 @@ With as few modifications and excemptions to the original data as possible, the 
 We developed our own ontology to describe the data in RDF (that we named "http://www.ptwproject.org/ontology#", which is not a domain we own). We have been using the [Semantic Sensor Network ontology](https://www.w3.org/2005/Incubator/ssn/ssnx/ssn), and the [OWL time ontology](https://www.w3.org/TR/owl-time/).
 
 NB: So far our data consists of a test set, and is restricted to 2016
+
+The attached backup files of our datasets can be restored to a fuseki server using tdbloader(CLI utility) from the Apache Jena package. 
