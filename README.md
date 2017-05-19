@@ -44,8 +44,7 @@ WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/TrafficData> {
 }
 }LIMIT 100000
 ```
-
-[INSERT SCREENSHOT HERE]
+![sgvizler_example.png](https://bitbucket.org/repo/nqRqLa/images/504347541-sgvizler_example.png)
 
 ### Prerequisites
 
