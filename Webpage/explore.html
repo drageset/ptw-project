@@ -1,0 +1,154 @@
+<!doctype html>
+<!--[if lt IE 7]>      
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
+    <![endif]-->
+    <!--[if IE 7]>         
+    <html class="no-js lt-ie9 lt-ie8" lang="">
+        <![endif]-->
+        <!--[if IE 8]>         
+        <html class="no-js lt-ie9" lang="">
+            <![endif]-->
+            <!--[if gt IE 8]><!--> 
+            <html class="no-js" lang="">
+                <!--<![endif]-->
+                <head>
+                    <meta charset="utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+                    <title>EXPLORE - The Pollution Traffic Weather Project | UiB | INFO216 | Spring 2017</title>
+                    <meta name="description" content="">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+                    <link rel="stylesheet" href="css/normalize.min.css">
+                    <link rel="stylesheet" href="css/main.css">
+                    <link rel="stylesheet" href="css/default.min.css">
+                    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
+                    <script type="text/javascript" src="http://84.215.131.130:3030/js/sgvizler.js"></script>
+                    <script>
+                        sgvizler
+                            .prefix("", "http://www.ptwproject.org/ontology#")
+                            .prefix("ssn", "http://purl.oclc.org/NET/ssnx/ssn")
+                            .prefix("time", "http://www.w3.org/2006/time#")
+                            .prefix("cc", "http://creativecommons.org/ns#")
+                            .prefix("prov", "http://www.w3.org/ns/prov#")
+                            .prefix("data", "http://fuseki.fone.no:3030/ptwp/data/")
+                            .defaultEndpointURL("http://fuseki.fone.no:3030/ptwp/sparql")
+                            .defaultQuery("SELECT ?subject ?predicate ?object { ?subject ?predicate ?object} LIMIT 20")
+                            .defaultChartFunction("sgvizler.visualization.Text")
+                            .defaultChartWidth(1024)
+                            .defaultChartHeight(500);
+                            $(document).ready(
+                         function (){ sgvizler.containerDrawAll(); }
+                        );
+                    </script>
+                    <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+                    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+                    <script>hljs.initHighlightingOnLoad();</script>
+                </head>
+                <body>
+                    <!--[if lt IE 8]>
+                    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+                    <![endif]-->
+                    <div class="header-container clearfix">
+                        <header class="wrapper clearfix">
+                              <h1 class="title"><a href="landing.html">PTWP</a><small> - The Pollution Traffic Weather Project</small></h1>
+                            <nav>
+                                <ul>
+                                    <li><a href="ptwp.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="explore.html">Explore</a></li>
+                                    <li><a href="query.html">Query</a></li>
+                                </ul>
+                            </nav>
+                        </header>
+                    </div>
+                    <div class="main-container-landing clearfix">
+                        <div class="main wrapper clearfix">
+                            <article class="fullwidth">
+                                <header>
+                                    <h2>Some example queries and their results for you to explore</h2>
+                                    <p>Please be patiente and let the page load for a minute or two - the dataset is pretty large and it takes a while to load everything</p>
+                                </header>
+                                <section>
+                                    <h3>Vehicles per hour in 2016 as Annotated Time Line</h3>
+                                    <div id="myExample"
+                                        data-sgvizler-endpoint="http://fuseki.fone.no:3030/ptwp/sparql"
+                                        data-sgvizler-query="prefix : <http://www.ptwproject.org/ontology#>
+                                        SELECT ?time ?vehicles
+                                        WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/TrafficData> { ?subject a :TrafficMeasurement .
+                                        ?subject :dateTime ?time .
+                                        ?subject :numOfVehicles ?vehicles . 
+                                        }}LIMIT 100000"
+                                        data-sgvizler-chart="google.visualization.AnnotatedTimeLine"
+                                        style="width:auto; height:300px;"></div>
+                                    <p> This Annotated Time Line was made using Google Visualization API and the following SPARQL query:
+                                    <pre><code class="sql">SELECT ?time ?vehicles
+WHERE { GRAPH &lt;http://fuseki.fone.no:3030/ptwp/data/TrafficData&gt; { ?subject a :TrafficMeasurement .
+               ?subject :dateTime ?time .
+               ?subject :numOfVehicles ?vehicles . 
+}} LIMIT 100000</code></pre>
+                                    </p>
+                                </section>
+                                <section>
+                                    <h3>Average vehicles per hour of day as Column Chart</h3>
+                                    <div id="myExample2"
+                                        data-sgvizler-endpoint="http://fuseki.fone.no:3030/ptwp/sparql"
+                                        data-sgvizler-query="prefix : <http://www.ptwproject.org/ontology#>
+                                        SELECT ?startTime ?cars
+                                        FROM <http://fuseki.fone.no:3030/ptwp/data/TrafficData>
+                                        WHERE {
+                                        ?q <http://www.ptwproject.org/ontology#startTime> ?startTime.
+                                        ?q <http://www.ptwproject.org/ontology#numOfVehicles> ?cars
+                                        } LIMIT 100000"
+                                        data-sgvizler-chart="google.visualization.ColumnChart"
+                                        data-sgvizler-chart-options="title=Number of cars"
+                                        style="width:auto; height:300px;"></div>
+                                    <p> This Column Chart was made using Google Visualization API and the following SPARQL query:
+                                    <pre><code class="sql">SELECT ?startTime ?cars
+FROM &lt;http://fuseki.fone.no:3030/ptwp/data/TrafficData&gt;
+WHERE {
+?q &lt;http://www.ptwproject.org/ontology#startTime&gt; ?startTime.
+?q &lt;http://www.ptwproject.org/ontology#numOfVehicles&gt; ?cars
+}</code></pre>
+                                    </p>
+                                </section>
+                                <section>
+                                    <h3>NO2 values per hour - limited to 1000 </h3>
+                                    <div id="myExample3"
+                                        data-sgvizler-endpoint="http://fuseki.fone.no:3030/ptwp/sparql"
+                                        data-sgvizler-query="prefix : <http://www.ptwproject.org/ontology#>
+                                        SELECT ?date ?time ?pollution ?unit
+                                        WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/PollutionData> {
+                                        ?subject a :NO2Measurement .
+                                        ?subject :valueMeasured ?pollution .
+                                        ?subject :endTime ?time . 
+                                        ?subject :date ?date . 
+                                        ?subject :unitOfMeasurement ?unit}}
+                                        ORDER BY ?date ?time"
+                                        data-sgvizler-chart="google.visualization.Table"
+                                        style="width:auto; height:300px;"></div>
+                                    <p> A table that shows NO2 values per hour for 2016-2017
+                                    <pre><code class="sql">prefix : &lt;http://www.ptwproject.org/ontology#&gt;
+SELECT ?date ?time ?pollution ?unit
+WHERE { GRAPH &lt;http://fuseki.fone.no:3030/ptwp/data/PollutionData&gt; {
+               ?subject a :NO2Measurement .
+               ?subject :valueMeasured ?pollution .
+    ?subject :endTime ?time . 
+?subject :date ?date . 
+  ?subject :unitOfMeasurement ?unit}}
+ORDER BY ?date ?time
+</code></pre>
+                                    </p>
+                                </section>
+                            </article>
+                        </div>
+                        <!-- #main -->   
+                    </div>
+                    <!-- #main-container -->
+                    <div class="footer-container">
+                        <footer class="wrapper">
+                <h5><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a> - Candidates 104, 109, and 121 - <a href="http://www.uib.no">UiB</a> - <a href="http://www.uib.no/en/course/INFO216">INFO216</a> - 2017</h5>
+            </footer>
+
+                </body>
+            </html>
