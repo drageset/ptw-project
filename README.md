@@ -23,10 +23,10 @@ Change the URL to fit your needs:
 ###Datasets
 
 ptwp_2017-05-19_22-07-41.nq.gz - this is our main dataset. It contains all our data separated into 4 graphs as follows:
-*default - 147 triples (Ontology)
-*data:TrafficData - 4039956 triples
-*data:PollutionData - 1338946 triples
-*data:WeatherData - 444548 triples
+* default - 147 triples (Ontology)
+* data:TrafficData - 4039956 triples
+* data:PollutionData - 1338946 triples
+* data:WeatherData - 444548 triples
 
 inf_ptw_2017-05-19_22-05-43.nq.gz - this is a sample database with inference engine turned on, containing data from only measuring point for each type of data limited to 1 month (May of 2016). In total 149015 triples. Due to the heavy load inference/reasoning creates on the servers, we had to limit this to 1 month only for demonstration purposes.
 
