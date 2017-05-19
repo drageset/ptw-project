@@ -56,11 +56,16 @@ If you want to use this dataset in a live production environment, make sure you 
 
 
 ## Built With
-[Apache Jena framework](https://jena.apache.org/download/index.cgi)
-[Apache Fuseki server](https://jena.apache.org/documentation/serving_data/) for hosting our dataset and website 
-[Sgvizler library](https://mgskjaeveland.github.io/sgvizler/), for visualizing our semantic data
-[Eclipse Neon](https://eclipse.org/neon/), for Java development
-[Protege](http://protege.stanford.edu/) for ontology development
+
+* [Apache Jena framework](https://jena.apache.org/download/index.cgi)
+
+* [Apache Fuseki server](https://jena.apache.org/documentation/serving_data/) for hosting our dataset and website 
+
+* [Sgvizler library](https://mgskjaeveland.github.io/sgvizler/), for visualizing our semantic data
+
+* [Eclipse Neon](https://eclipse.org/neon/), for Java development
+
+* [Protege](http://protege.stanford.edu/) for ontology development
 
 ## Authors
 
