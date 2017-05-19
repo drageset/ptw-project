@@ -1,15 +1,67 @@
-The Pollution Traffic Weather Project ([visit our homepage!](http://fuseki.fone.no:3030/landing.html)) is an accademic non-proffit project based on data with open licencing ([CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)) from [The Norwegian Public Roads Administration](http://www.vegvesen.no/), [The Norwegian Meteorological Institute](https://www.met.no/), and [The Norwegian Institute for Air Research](http://www.nilu.no/). 
+# The Pollution Traffic Weather Project
 
-We have used the [Apache Jena framework](https://jena.apache.org/) for Java to lift data about weather, air pollution and traffic in Bergen, Norway from CSV/xls tables to RDF graphs. Around these RDF graphs we have created a website and SPARQL endpoint. As the project was not initially intended to be open sourced, most of the code comments are as of 9th of May 2017 in Norwegian.
+##About
 
-Our goal is to make data about air quality accessible and explorable on the internet, mainly making the data easier to comprehend and reflect on for the general populace, but also letting data scientists benefit from the extra power provided by semantic technologies (RDF* and OWL). 
+The Pollution Traffic Weather Project (visit our homepage and try the service at [http://fuseki.fone.no:3030/landing.html](http://fuseki.fone.no:3030/landing.html)) is an academic non-profit project based on data with open licensing (CC BY 3.0) from The Norwegian Public Roads Administration, The Norwegian Meteorological Institute, and The Norwegian Institute for Air Research. We have used the Apache Jena framework for Java to lift data about weather, air pollution and traffic in Bergen, Norway from CSV/xls tables to RDF graphs. Around these RDF graphs we have created a website and SPARQL endpoint.
 
-We have parsed and lifted data about measurements of air polutants like NO2, data about the amount of cars passing certain points in the city per hour, and weather measurements like percipitation and wind direction/speed.
+## Getting Started
 
-With as few modifications and excemptions to the original data as possible, the data is now stored in RDF graphs accessible for query through the [SPARQL endpoint at this site](http://fuseki.fone.no:3030/query.html). For visualising our data ([click here to see some cool graphs](http://fuseki.fone.no:3030/explore.html)) we have chosen the sgvizler visualisation tool, which can be found [here on GitHub](https://mgskjaeveland.github.io/sgvizler/).
 
-We developed our own ontology to describe the data in RDF (that we named "http://www.ptwproject.org/ontology#", which is not a domain we own). We have been using the [Semantic Sensor Network ontology](https://www.w3.org/2005/Incubator/ssn/ssnx/ssn), and the [OWL time ontology](https://www.w3.org/TR/owl-time/).
+To get a copy of our dataset up and running you need to download and install the Apache Jena Fuseki server from the [official site](https://jena.apache.org/download/) 
+We used version 2.6.0.
+Once installed and up and running you need to use the tdbloader to restore our dataset (“ptwp_2017-05-19_22-07-41.nq.gz” or “inf_ptw_2017-05-19_22-05-43.nq.gz”, further information in the DATASETS section) onto your Fuseki server. The tdbloader application is found in the Apache Jena package that you can download from the link above. Version 3.3.0 at the time of writing.
 
-NB: So far our data consists of a test set, and is restricted to 2016
+If you wish to use our template for the webpage, you can use either the built-in webserver in the fuseki(just dump the files from the Webpage folder into the webapp folder of your Fuseki server and you are good to go. The included sgvizler.js file is modified from the original to remove some settings - you can download the latest version from the [sgvizler homepage](http://mgskjaeveland.github.io/sgvizler/). 
 
-The attached backup files of our datasets can be restored to a fuseki server using tdbloader(CLI utility) from the Apache Jena package. 
+If using our template, please remember to update the SPARQL-endpoint URL in all the .html files to fit your Fuseki server URL.
+
+Change the URL to fit your needs: 
+```
+.defaultEndpointURL("http://YOURSERVER.COM:3030/DATASET/SERVICE")
+```
+
+###Datasets
+
+ptwp_2017-05-19_22-07-41.nq.gz - this is our main dataset. It contains all our data separated into 4 graphs as follows:
+*default - 147 triples (Ontology)
+*data:TrafficData - 4039956 triples
+*data:PollutionData - 1338946 triples
+*data:WeatherData - 444548 triples
+
+
+inf_ptw_2017-05-19_22-05-43.nq.gz - this is a sample database with inference engine turned on, containing data from only measuring point for each type of data limited to 1 month (May of 2016). In total 149015 triples. Due to the heavy load inference/reasoning creates on the servers, we had to limit this to 1 month only for demonstration purposes.
+
+### Usage Example
+Here is an example of the results of a SPARQL query visualized in sgvizler:
+
+PREFIXes are already defined on the endpoint, so they are not included here.
+```
+SELECT ?time ?cars
+WHERE { GRAPH <http://fuseki.fone.no:3030/ptwp/data/TrafficData> { 
+?subject a :TrafficMeasurement .
+               	?subject :dateTime ?time .
+               	?subject :numOfVehicles ?cars .
+}
+}LIMIT 100000
+```
+
+### Prerequisites
+
+
+If you want to use this dataset in a live production environment, make sure you have sufficiently powerful hardware. Also, if running in a live environment you should consider using Apache2 as a host for you webpages instead of the built-in webserver in the Fuseki application. Also make sure to have a properly configured .htaccess file to restrict write access to the public, or use the included Apache Shiro configuration file (shiro.ini) if you wish to use Apache Shiro for security.
+
+
+## Built With
+[Apache Jena framework](https://jena.apache.org/download/index.cgi)
+[Apache Fuseki server](https://jena.apache.org/documentation/serving_data/) for hosting our dataset and website 
+[Sgvizler library](https://mgskjaeveland.github.io/sgvizler/), for visualizing our semantic data
+[Eclipse Neon](https://eclipse.org/neon/), for Java development
+[Protege](http://protege.stanford.edu/) for ontology development
+
+## Authors
+
+Candidates 104, 109, and 121
+
+## License
+
+This project is licensed under the CC BY 3.0 License - see [CreativeCommons 3.0 Attribution Unported](https://creativecommons.org/licenses/by/3.0/legalcode) for more details and the full license.
