@@ -1,0 +1,237 @@
+html {
+    color: #FFFFFF;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+body {
+    font: 16px/26px Helvetica, Helvetica Neue, Arial;
+     margin:0;
+  padding:0;
+  background: url('/img/bg.jpg') no-repeat center fixed; 
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+
+.introduction {
+    width: 800px;
+    height: 600px;
+    
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+
+h1 {
+    margin: 0;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    font-size: 2em;
+    text-align: center;
+}
+
+
+nav {
+    float: right;
+    width: 100%;
+    }
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+nav a {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+    background: #455A64;
+    float: left;
+    width: 20%;
+    margin: 0 10px;
+    padding: 25px 10px;
+    display: block;
+    -webkit-box-shadow: 0 5px 5px #aaa;
+           -moz-box-shadow: 0 5px 5px #aaa;
+                box-shadow: 0 5px 5px #aaa;
+}
+
+nav a:hover {
+    color: white;
+    background: #607D8B;
+}
+nav a:visited {
+    color: white;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #455A64;
+    margin: 1em 0;
+    padding: 0; 
+}
+
+
+
+.wrapper {
+    
+    width: 100%;
+    margin: 0;
+}
+
+/* ==============
+    MOBILE: Main
+   ============== */
+
+.main {
+    padding: 30px 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.main article h1 {
+    font-size: 2em;
+}
+
+.footer-container footer {
+    position: absolute;
+    color: white;
+    padding: 10px 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 5.46em;
+    line-height: 1.23em;
+    margin: 0 auto;
+    width: 800px;
+    text-align: center;
+}
+
+
+small { 
+    font-size: 20px;
+}
+
+.clear { clear: both; }
+
+}
+
+    .main article {
+        float: left;
+        width: 100%;
+
+    }
+}
+    .wrapper {
+        width: 1026px; /* 1140px - 10% for margins */
+        margin: 0 auto;
+    }
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+
+

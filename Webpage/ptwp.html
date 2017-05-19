@@ -1,0 +1,98 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>The Pollution Traffic Weather Project | UiB | INFO216 | Spring 2017</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
+        <script type="text/javascript" src="http://84.215.131.130:3030/js/sgvizler.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script>
+         sgvizler
+             .prefix("", "http://www.ptwproject.org/ontology#")
+             .prefix("ssn", "http://purl.oclc.org/NET/ssnx/ssn")
+             .prefix("time", "http://www.w3.org/2006/time#")
+             .prefix("cc", "http://creativecommons.org/ns#")
+             .prefix("prov", "http://www.w3.org/ns/prov#")
+             .defaultEndpointURL("http://fuseki.fone.no:3030/ptwp/sparql")
+             .defaultQuery("SELECT ?subject ?predicate ?object ?g WHERE { GRAPH ?g {?subject ?predicate ?object}} LIMIT 20")
+             .defaultChartFunction("sgvizler.visualization.Text")
+             .defaultChartWidth(1024)
+             .defaultChartHeight(500);
+    </script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class="header-container clearfix">
+            <header class="wrapper clearfix">
+                <h1 class="title"><a href="landing.html">PTWP</a><small> - The Pollution Traffic Weather Project</small></h1>
+                <nav>
+                    <ul>
+                        <li><a href="ptwp.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="explore.html">Explore</a></li>
+                        <li><a href="query.html">Query</a></li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+
+        <div class="main-container clearfix">
+
+            <div class="main wrapper clearfix">
+
+                <article>
+                    <header>
+                        <h2>Welcome to the Pollution Traffic Weather Project</h2>
+                    </header>
+                    <section>
+                        <h3>Short into</h3>
+                        <p>On this site you can access and explore weather, traffic and air polution data for the Bergen Area. To see some cool graphs, go to the <a href="http://fuseki.fone.no:3030/explore.html">EXPLORE tab</a>. Our data is stored as RDF graphs. To query the data as a SPARQL endpoint, go to the <a href="http://fuseki.fone.no:3030/query.html">QUERY tab</a>. If you want to know more about our project, go to the <a href="http://fuseki.fone.no:3030/about.html">about tab</a></p>
+                    </section>
+                    <section>
+                        <h3>About us</h3>
+                        <p>We are a group of three bachelor level students at the <a href="http://www.uib.no/en/infomedia">Department of Information Science and Media Studies, University of Bergen</a>. Our goal was to develop a web service that makes air pollution- traffic- and weather data available for exploration by anyone interested, and SPARQL query by anyone capable. Increasing awareness of and levels of air pollution in cities call for insight into how weather and traffic interacts with air pollution levels. Historical data for Norway is only available upon request. Our idea was that making the data more available and public will make it more useful.</p>
+                    </section>
+                    <section>
+                        <h3>Explore</h3>
+                        <p>If you click on the <a href="http://fuseki.fone.no:3030/explore.html">EXPLORE tab</a>, you wil see several <a href="https://mgskjaeveland.github.io/sgvizler/">sgvizler</a> graphs, accompanied by the <a href="https://en.wikipedia.org/wiki/SPARQL">SPARQL</a> queries that were used to retrieve the <a href="https://en.wikipedia.org/wiki/Resource_Description_Framework">RDF graphs</a> that are visualized. NB: The visualizations might take a while to load. You can hover over each bar or pie slice in the graph to see more information about it.</p>
+                    </section>
+                </article>
+
+                <aside>
+                    <h3>Useful links</h3>
+                    <ul>
+                    <li><a href="http://www.nilu.no/">Norwegian Institute for Air Research</a></li>
+                    <li><a href="http://www.vegvesen.no/">Norwegian Public Roads Administration</a></li>
+                    <li><a href="https://www.met.no/">The Norwegian Meteorological Institute</a></li>
+                    <li><a href="http://www.luftkvalitet.info/">Air Quality Information</a></li>
+                    <li><a href="http://linkeddata.org/home">Linked Data</a></li>
+                    <li><a href="https://www.w3.org/wiki/LargeTripleStores">TDB size list</a></li>
+                    <li><a href="https://www.w3.org/TR/sparql11-overview/">SPARQL overview</a></li>
+                    <li><a href="https://jena.apache.org/tutorials/sparql.html">SPARQL Tutorial</a></li>
+                    <li><a href="https://www.slideshare.net/LeeFeigenbaum/sparql-cheat-sheet">SPARQL "Cheat sheet"</a></li>
+                    </ul>
+                </aside>
+            </div> <!-- #main -->   
+        </div> <!-- #main-container -->
+
+        <div class="footer-container">
+            <footer class="wrapper">
+                <h5>Copyright &copy; - Fjodor Kozlov, Olve Drageset, Vetle Prytz Warholm - UiB - INFO216 - SPRING 2017</h5>
+            </footer>
+        </div>
+    </body>
+</html>

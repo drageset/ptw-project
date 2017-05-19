@@ -1,0 +1,118 @@
+<!doctype html>
+<!--[if lt IE 7]>      
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="">
+    <![endif]-->
+    <!--[if IE 7]>         
+    <html class="no-js lt-ie9 lt-ie8" lang="">
+        <![endif]-->
+        <!--[if IE 8]>         
+        <html class="no-js lt-ie9" lang="">
+            <![endif]-->
+            <!--[if gt IE 8]><!--> 
+            <html class="no-js" lang="">
+                <!--<![endif]-->
+                <head>
+                    <meta charset="utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+                    <title>QUERY - The Pollution Traffic Weather Project | UiB | INFO216 | Spring 2017</title>
+                    <meta name="description" content="">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+                    <link rel="stylesheet" href="css/normalize.min.css">
+                    <link rel="stylesheet" href="css/main.css">
+                    <link rel="stylesheet" href="css/default.min.css">
+                    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
+                    <script type="text/javascript" src="http://84.215.131.130:3030/js/sgvizler.js"></script>
+                    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                    <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+                    <script>
+                        sgvizler
+                            .prefix("", "http://www.ptwproject.org/ontology#")
+                            .prefix("ssn", "http://purl.oclc.org/NET/ssnx/ssn")
+                            .prefix("time", "http://www.w3.org/2006/time#")
+                            .prefix("cc", "http://creativecommons.org/ns#")
+                            .prefix("prov", "http://www.w3.org/ns/prov#")
+                            .prefix("data", "http://fuseki.fone.no:3030/ptwp/data/")
+                            .defaultEndpointURL("http://fuseki.fone.no:3030/ptwp/sparql")
+                            .defaultQuery("SELECT ?subject ?predicate ?object ?g WHERE { GRAPH ?g {?subject ?predicate ?object}} LIMIT 20")
+                            .defaultChartFunction("sgvizler.visualization.Text")
+                            .defaultChartWidth(500)
+                            .defaultChartHeight(500);
+                    </script>
+                    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+                    <script>hljs.initHighlightingOnLoad();</script>
+
+                </head>
+                <body>
+                    <!--[if lt IE 8]>
+                    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+                    <![endif]-->
+                    <div class="header-container clearfix">
+                        <header class="wrapper clearfix">
+                              <h1 class="title"><a href="landing.html">PTWP</a><small> - The Pollution Traffic Weather Project</small></h1>
+                            <nav>
+                                <ul>
+                                    <li><a href="ptwp.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="explore.html">Explore</a></li>
+                                    <li><a href="query.html">Query</a></li>
+                                </ul>
+                            </nav>
+                        </header>
+                    </div>
+                    <div class="main-container clearfix">
+                        <div class="main wrapper clearfix">
+                        <article>
+                            <header>
+                                <h1>SPARQL-endpoint</h1>
+                            </header>
+                            <section>
+                            <h3>General information</h3>
+                            <p>This page gives you access to query our PTW dataset. All the neccessery prefixes are allready predifined. The visualisation is made possible by <a href="https://mgskjaeveland.github.io/sgvizler/">sgvizler</a>. You can select the endpoint you want to use by editing the Endpoint-field below to point to the correct service. The url is on the form <pre><code class="sql">http://fuseki.fone.no:3030/DATASET/SERVICE</code></pre>Available services and datasets are listed to the right.</p></section>
+                            <section>
+                            <p>The default query will just fetch 20 random triples from any available graph<pre><code class="sql">SELECT ?subject ?predicate ?object ?g 
+WHERE { GRAPH ?g 
+        {?subject ?predicate ?object}
+} LIMIT 20</code></pre></p></section>
+                            <section>
+                            <p>You can also select a chart type, but the query must correspond to the requirments set by the given chart. You can views the requirements <a href="http://mgskjaeveland.github.io/sgvizler/#charts">here.</a></p>
+                            </section>
+                            <section>
+                                <p><strong>Please be patient while waiting for the results and please try to limit your query results to a sensable amount so as not to overload the server. Anything below a 1 000 000 results should be OK to load but will take a long time to load.</strong></p>
+                            </section>
+                            <h4>Happy querying!</h4></p>
+                        </article>
+                        <aside>
+                    <h3>Available datasets</h3>
+                    <strong>ptwp</strong><br>
+                    The main dataset with all our data seperated into 4 graphs
+                    <ul style="list-style: none;">
+                    <li fontsize="10"><strong>default</strong>: 147 triples (Ontology) </li>
+                    <li fontsize="10"><strong>data:TrafficData</strong>: 4039956 triples</li>
+                    <li fontsize="10"><strong>data:PollutionData</strong>: 1338946 triples</li>
+                    <li fontsize="10"><strong>data:WeatherData</strong>: 444548 triples</li>
+                    </ul>
+                    <strong>inf_ptw</strong><br>
+                    A small sample set with only 1 month worth of data, but with inference enabled. 149015 triples all in the default graph.<br>
+                    <h3>Available services</h3>
+                    Following services are open to public:
+                    <ul>
+                    <li><strong>query</strong> - regular query</li>
+                    <li><strong>sparql</strong> - regular query</li>
+                    <li><strong>data</strong> - GraphStore</li>
+                    </ul>
+                </aside>
+                            <article class="fullwidth">
+                            <header>
+                                <h2>Predefined prefixes</h2>
+                            </header>
+                            <div id="myForm" class="clearfix">
+                                <script type="text/javascript">
+                                    $(document).ready(function() { sgvizler.formDraw("myForm"); });
+                                </script>
+                            </div>
+                            </article>
+                        </div>
+                    </div>
+                </body>
+            </html>
