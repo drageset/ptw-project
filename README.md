@@ -1,6 +1,6 @@
 # The Pollution Traffic Weather Project
 
-##About
+## About
 
 The Pollution Traffic Weather Project (visit our homepage and try the service at [http://fuseki.fone.no:3030/landing.html](http://fuseki.fone.no:3030/landing.html)) is an academic non-profit project based on data with open licensing (CC BY 3.0) from The Norwegian Public Roads Administration, The Norwegian Meteorological Institute, and The Norwegian Institute for Air Research. We have used the Apache Jena framework for Java to lift data about weather, air pollution and traffic in Bergen, Norway from CSV/xls tables to RDF graphs. Around these RDF graphs we have created a website and SPARQL endpoint.
 
@@ -20,7 +20,7 @@ Change the URL to fit your needs:
 .defaultEndpointURL("http://YOURSERVER.COM:3030/DATASET/SERVICE")
 ```
 
-###Datasets
+### Datasets
 
 ptwp_2017-05-19_22-07-41.nq.gz - this is our main dataset. It contains all our data separated into 4 graphs as follows:
 
